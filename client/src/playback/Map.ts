@@ -136,23 +136,25 @@ export class CurrentMap {
                 // Render rounded (clipped) paint
                 const paint = this.paint[schemaIdx]
                 if (paint) {
-                    if (config.enableFancyPaint) {
-                        renderUtils.renderRounded(
-                            ctx,
-                            i,
-                            j,
-                            this,
-                            this.paint,
-                            () => {
-                                ctx.fillStyle = paintColors[paint]
-                                ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
-                            },
-                            { x: true, y: false }
-                        )
-                    } else {
-                        ctx.fillStyle = paintColors[paint]
-                        ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
-                    }
+                    // if (config.enableFancyPaint) {
+                    //     renderUtils.renderRounded(
+                    //         ctx,
+                    //         i,
+                    //         j,
+                    //         this,
+                    //         this.paint,
+                    //         () => {
+                    //             ctx.fillStyle = paintColors[paint]
+                    //             ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                    //         },
+                    //         { x: true, y: false }
+                    //     )
+                    // } else {
+                    //     ctx.fillStyle = paintColors[paint]
+                    //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                    // }
+                    ctx.fillStyle = paintColors[paint]
+                    ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
                 }
 
                 if (config.showPaintMarkers) {
@@ -420,16 +422,26 @@ export class StaticMap {
             this.dimension.height
         )
 
-        const dirtImg = getImageIfLoaded('dirty.png')
-        if (dirtImg) {
-            ctx.drawImage(
-                dirtImg,
-                this.dimension.minCorner.x,
-                this.dimension.minCorner.y,
-                this.dimension.width,
-                this.dimension.height
-            )
-        }
+        // const dirtImg = getImageIfLoaded('dirty.png')
+        // if (dirtImg) {
+        //     ctx.drawImage(
+        //         dirtImg,
+        //         this.dimension.minCorner.x,
+        //         this.dimension.minCorner.y,
+        //         this.dimension.width,
+        //         this.dimension.height
+        //     )
+        // }
+        // const blob = getImageIfLoaded('the blob.png')
+        // if (blob) {
+        //     ctx.drawImage(
+        //         blob,
+        //         this.dimension.minCorner.x,
+        //         this.dimension.minCorner.y,
+        //         this.dimension.width,
+        //         this.dimension.height
+        //     )
+        // }
 
         for (let i = 0; i < this.dimension.width; i++) {
             for (let j = 0; j < this.dimension.height; j++) {
@@ -438,10 +450,12 @@ export class StaticMap {
 
                 // Render rounded (clipped) wall
                 if (this.walls[schemaIdx]) {
-                    renderUtils.renderRounded(ctx, i, j, this, this.walls, () => {
-                        ctx.fillStyle = currentColors[Colors.WALLS_COLOR]
-                        ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
-                    })
+                    ctx.fillStyle = currentColors[Colors.WALLS_COLOR]
+                    ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                    // renderUtils.renderRounded(ctx, i, j, this, this.walls, () => {
+                    //     ctx.fillStyle = currentColors[Colors.WALLS_COLOR]
+                    //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                    // })
                 }
 
                 // Draw grid

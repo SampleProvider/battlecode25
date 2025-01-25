@@ -43,27 +43,27 @@ const squareIntersects = (check: Vector, center: Vector, radius: number) => {
 
 const checkValidRuinPlacement = (check: Vector, map: StaticMap, bodies: Bodies) => {
     // Check if ruin is too close to the border
-    if (check.x <= 1 || check.x >= map.width - 2 || check.y <= 1 || check.y >= map.height - 2) {
-        return false
-    }
+    // if (check.x <= 1 || check.x >= map.width - 2 || check.y <= 1 || check.y >= map.height - 2) {
+    //     return false
+    // }
 
-    // Check if this is a valid ruin location
-    const idx = map.locationToIndex(check.x, check.y)
-    const ruin = map.ruins.findIndex((l) => squareIntersects(l, check, 4))
-    const wall = map.walls.findIndex((v, i) => !!v && squareIntersects(map.indexToLocation(i), check, 2))
-    const paint = map.initialPaint[idx]
+    // // Check if this is a valid ruin location
+    // const idx = map.locationToIndex(check.x, check.y)
+    // const ruin = map.ruins.findIndex((l) => squareIntersects(l, check, 4))
+    // const wall = map.walls.findIndex((v, i) => !!v && squareIntersects(map.indexToLocation(i), check, 2))
+    // const paint = map.initialPaint[idx]
 
-    let tower = undefined
-    for (const b of bodies.bodies.values()) {
-        if (squareIntersects(check, b.pos, 4)) {
-            tower = b
-            break
-        }
-    }
+    // let tower = undefined
+    // for (const b of bodies.bodies.values()) {
+    //     if (squareIntersects(check, b.pos, 4)) {
+    //         tower = b
+    //         break
+    //     }
+    // }
 
-    if (tower || ruin !== -1 || wall !== -1 || paint) {
-        return false
-    }
+    // if (tower || ruin !== -1 || wall !== -1 || paint) {
+    //     return false
+    // }
 
     return true
 }
@@ -266,7 +266,11 @@ export class TowerBrush extends SymmetricMapEditorBrush<StaticMap> {
             label: 'Tower Type',
             options: [
                 { value: schema.RobotType.PAINT_TOWER, label: 'Paint Tower' },
-                { value: schema.RobotType.MONEY_TOWER, label: 'Money Tower' }
+                { value: schema.RobotType.MONEY_TOWER, label: 'Money Tower' },
+                { value: schema.RobotType.DEFENSE_TOWER, label: 'Defense Tower' },
+                { value: schema.RobotType.SOLDIER, label: 'Soldier' },
+                { value: schema.RobotType.SPLASHER, label: 'Splasher' },
+                { value: schema.RobotType.MOPPER, label: 'Mopper' },
             ]
         }
     }

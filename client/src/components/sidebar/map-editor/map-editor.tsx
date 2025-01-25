@@ -28,6 +28,8 @@ interface Props {
 
 const UNDO_STACK_SIZE = 100
 
+var intervalSet: any;
+
 export const MapEditorPage: React.FC<Props> = (props) => {
     const round = useRound()
     const [cleared, setCleared] = React.useState(true)
@@ -139,9 +141,22 @@ export const MapEditorPage: React.FC<Props> = (props) => {
         clearUndoStack()
     }
 
-    useEffect(() => {
-        if (canvasMouseDown && hoveredTile) applyBrush(hoveredTile)
-    }, [canvasMouseDown, hoveredTile])
+    if (intervalSet) {
+        clearInterval(intervalSet);
+    }
+    intervalSet = setInterval(function() {
+            if (canvasMouseDown && hoveredTile) {
+                applyBrush(hoveredTile)
+            }
+            else {
+                GameRenderer.fullRender()
+            }
+        }, 1000/60);
+
+    // useEffect(() => {
+    //     if (canvasMouseDown && hoveredTile) applyBrush(hoveredTile)
+    // // }, [canvasMouseDown, hoveredTile])
+    // })
 
     useEffect(() => {
         if (props.open) {

@@ -49,127 +49,128 @@ const squareIntersects = (check: Vector, center: Vector, radius: number) => {
  * Returns a non-empty string with an error if applicable
  */
 function verifyMap(map: CurrentMap, bodies: Bodies): string {
-    if (map.isEmpty() && bodies.isEmpty()) {
-        return 'Map is empty'
-    }
+    // LOL no more dumb verification
+    // if (map.isEmpty() && bodies.isEmpty()) {
+    //     return 'Map is empty'
+    // }
 
-    // Validate map elements
-    let numWalls = 0
-    const mapSize = map.width * map.height
-    for (let i = 0; i < mapSize; i++) {
-        const pos = map.indexToLocation(i)
-        const wall = map.staticMap.walls[i]
-        const ruin = map.staticMap.ruins.find((l) => l.x === pos.x && l.y === pos.y)
-        const body = bodies.getBodyAtLocation(pos.x, pos.y)
+    // // Validate map elements
+    // let numWalls = 0
+    // const mapSize = map.width * map.height
+    // for (let i = 0; i < mapSize; i++) {
+    //     const pos = map.indexToLocation(i)
+    //     const wall = map.staticMap.walls[i]
+    //     const ruin = map.staticMap.ruins.find((l) => l.x === pos.x && l.y === pos.y)
+    //     const body = bodies.getBodyAtLocation(pos.x, pos.y)
 
-        if (ruin && wall) {
-            return `Ruin and wall overlap at (${pos.x}, ${pos.y})`
-        }
+    //     if (ruin && wall) {
+    //         return `Ruin and wall overlap at (${pos.x}, ${pos.y})`
+    //     }
 
-        if (ruin && body) {
-            return `Robot at (${pos.x}, ${pos.y}) is on top of a ruin`
-        }
+    //     if (ruin && body) {
+    //         return `Robot at (${pos.x}, ${pos.y}) is on top of a ruin`
+    //     }
 
-        if (wall && body) {
-            return `Robot at (${pos.x}, ${pos.y}) is on top of a wall`
-        }
+    //     if (wall && body) {
+    //         return `Robot at (${pos.x}, ${pos.y}) is on top of a wall`
+    //     }
 
-        if (ruin) {
-            // Check distance to nearby ruins
-            for (const checkRuin of map.staticMap.ruins) {
-                if (checkRuin === ruin) continue
+    //     if (ruin) {
+    //         // Check distance to nearby ruins
+    //         for (const checkRuin of map.staticMap.ruins) {
+    //             if (checkRuin === ruin) continue
 
-                if (squareIntersects(checkRuin, pos, 4)) {
-                    return (
-                        `Ruin at (${pos.x}, ${pos.y}) is too close to ruin ` +
-                        `at (${checkRuin.x}, ${checkRuin.y}), must be ` +
-                        `>= 5 away`
-                    )
-                }
-            }
-        }
+    //             if (squareIntersects(checkRuin, pos, 4)) {
+    //                 return (
+    //                     `Ruin at (${pos.x}, ${pos.y}) is too close to ruin ` +
+    //                     `at (${checkRuin.x}, ${checkRuin.y}), must be ` +
+    //                     `>= 5 away`
+    //                 )
+    //             }
+    //         }
+    //     }
 
-        if (wall) {
-            // Check distance to nearby ruins
+    //     if (wall) {
+    //         // Check distance to nearby ruins
 
-            for (const checkRuin of map.staticMap.ruins) {
-                if (squareIntersects(checkRuin, pos, 2)) {
-                    return (
-                        `Wall at (${pos.x}, ${pos.y}) is too close to ruin ` +
-                        `at (${checkRuin.x}, ${checkRuin.y}), must be ` +
-                        `>= 3 away`
-                    )
-                }
-            }
-        }
+    //         for (const checkRuin of map.staticMap.ruins) {
+    //             if (squareIntersects(checkRuin, pos, 2)) {
+    //                 return (
+    //                     `Wall at (${pos.x}, ${pos.y}) is too close to ruin ` +
+    //                     `at (${checkRuin.x}, ${checkRuin.y}), must be ` +
+    //                     `>= 3 away`
+    //                 )
+    //             }
+    //         }
+    //     }
 
-        numWalls += wall
-    }
+    //     numWalls += wall
+    // }
 
-    // Validate wall percentage
-    const maxPercent = 20
-    if (numWalls * 100 >= mapSize * maxPercent) {
-        const displayPercent = (numWalls / mapSize) * 100
-        return `Walls must take up at most ${maxPercent}% of the map, currently is ${displayPercent.toFixed(1)}%`
-    }
+    // // Validate wall percentage
+    // const maxPercent = 20
+    // if (numWalls * 100 >= mapSize * maxPercent) {
+    //     const displayPercent = (numWalls / mapSize) * 100
+    //     return `Walls must take up at most ${maxPercent}% of the map, currently is ${displayPercent.toFixed(1)}%`
+    // }
 
-    // Validate initial bodies
-    const numPaintTowers = [0, 0]
-    const numMoneyTowers = [0, 0]
-    for (const body of bodies.bodies.values()) {
-        // Check distance to nearby ruins, towers, and walls
+    // // Validate initial bodies
+    // const numPaintTowers = [0, 0]
+    // const numMoneyTowers = [0, 0]
+    // for (const body of bodies.bodies.values()) {
+    //     // Check distance to nearby ruins, towers, and walls
 
-        if (body.robotType === RobotType.PAINT_TOWER) {
-            numPaintTowers[body.team.id - 1]++
-        } else if (body.robotType === RobotType.MONEY_TOWER) {
-            numMoneyTowers[body.team.id - 1]++
-        } else {
-            return `Tower at (${body.pos.x}, ${body.pos.y}) has invalid type!`
-        }
+    //     if (body.robotType === RobotType.PAINT_TOWER) {
+    //         numPaintTowers[body.team.id - 1]++
+    //     } else if (body.robotType === RobotType.MONEY_TOWER) {
+    //         numMoneyTowers[body.team.id - 1]++
+    //     } else {
+    //         return `Tower at (${body.pos.x}, ${body.pos.y}) has invalid type!`
+    //     }
 
-        for (const checkRuin of map.staticMap.ruins) {
-            if (squareIntersects(checkRuin, body.pos, 4)) {
-                return (
-                    `Tower at (${body.pos.x}, ${body.pos.y}) is too close to ruin ` +
-                    `at (${checkRuin.x}, ${checkRuin.y}), must be ` +
-                    `>= 5 away`
-                )
-            }
-        }
+    //     for (const checkRuin of map.staticMap.ruins) {
+    //         if (squareIntersects(checkRuin, body.pos, 4)) {
+    //             return (
+    //                 `Tower at (${body.pos.x}, ${body.pos.y}) is too close to ruin ` +
+    //                 `at (${checkRuin.x}, ${checkRuin.y}), must be ` +
+    //                 `>= 5 away`
+    //             )
+    //         }
+    //     }
 
-        for (const checkBody of bodies.bodies.values()) {
-            if (checkBody === body) continue
-            if (squareIntersects(checkBody.pos, body.pos, 4)) {
-                return (
-                    `Tower at (${body.pos.x}, ${body.pos.y}) is too close to ruin ` +
-                    `at (${checkBody.pos.x}, ${checkBody.pos.y}), must be ` +
-                    `>= 5 away`
-                )
-            }
-        }
+    //     for (const checkBody of bodies.bodies.values()) {
+    //         if (checkBody === body) continue
+    //         if (squareIntersects(checkBody.pos, body.pos, 4)) {
+    //             return (
+    //                 `Tower at (${body.pos.x}, ${body.pos.y}) is too close to ruin ` +
+    //                 `at (${checkBody.pos.x}, ${checkBody.pos.y}), must be ` +
+    //                 `>= 5 away`
+    //             )
+    //         }
+    //     }
 
-        const wall = map.staticMap.walls.findIndex(
-            (v, i) => !!v && squareIntersects(map.indexToLocation(i), body.pos, 2)
-        )
-        if (wall !== -1) {
-            const pos = map.indexToLocation(wall)
-            return (
-                `Tower at (${body.pos.x}, ${body.pos.y}) is too close to wall ` +
-                `at (${pos.x}, ${pos.y}), must be ` +
-                `>= 3 away`
-            )
-        }
-    }
+    //     const wall = map.staticMap.walls.findIndex(
+    //         (v, i) => !!v && squareIntersects(map.indexToLocation(i), body.pos, 2)
+    //     )
+    //     if (wall !== -1) {
+    //         const pos = map.indexToLocation(wall)
+    //         return (
+    //             `Tower at (${body.pos.x}, ${body.pos.y}) is too close to wall ` +
+    //             `at (${pos.x}, ${pos.y}), must be ` +
+    //             `>= 3 away`
+    //         )
+    //     }
+    // }
 
-    for (const teamIdx of [0, 1]) {
-        if (numPaintTowers[teamIdx] !== 1) {
-            return `Expected exactly 1 ${TEAM_COLOR_NAMES[teamIdx]} paint tower, found ${numPaintTowers[teamIdx]}`
-        }
+    // for (const teamIdx of [0, 1]) {
+    //     if (numPaintTowers[teamIdx] !== 1) {
+    //         return `Expected exactly 1 ${TEAM_COLOR_NAMES[teamIdx]} paint tower, found ${numPaintTowers[teamIdx]}`
+    //     }
 
-        if (numMoneyTowers[teamIdx] !== 1) {
-            return `Expected exactly 1 ${TEAM_COLOR_NAMES[teamIdx]} money tower, found ${numMoneyTowers[teamIdx]}`
-        }
-    }
+    //     if (numMoneyTowers[teamIdx] !== 1) {
+    //         return `Expected exactly 1 ${TEAM_COLOR_NAMES[teamIdx]} money tower, found ${numMoneyTowers[teamIdx]}`
+    //     }
+    // }
 
     return ''
 }

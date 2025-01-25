@@ -60,6 +60,12 @@ class GameRendererClass {
             loadImage(`robots/${color.toLowerCase()}/splasher_64x64.png`)
             loadImage(`robots/${color.toLowerCase()}/mopper_64x64.png`)
         }
+        loadImage('the blob.png')
+        loadImage('1-4 2lights.png')
+        loadImage('2525.png')
+        loadImage('apple.png')
+        loadImage('apple2.png')
+        loadImage('rickastley.png')
     }
 
     clearSelected() {
@@ -112,6 +118,320 @@ class GameRendererClass {
         if (!match || !ctx || !overlayCtx) return
 
         const currentRound = match.currentRound
+
+        // pixel simulator
+        var grid: number[][] = [];
+        var nextGrid: number[][] = [];
+        var width = currentRound.map.width;
+        var height = currentRound.map.height;
+        for (var y = 0; y < height; y++) {
+            grid[y] = [];
+            nextGrid[y] = [];
+            for (var x = 0; x < width; x++) {
+                grid[y][x] = 0;
+                nextGrid[y][x] = -1;
+                if (currentRound.map.paint[y * width + x] == 3) {
+                    grid[y][x] = 1; // gold primary, sand
+                }
+                if (currentRound.map.paint[y * width + x] == 4) {
+                    grid[y][x] = 3; // gold secondary, lava
+                }
+                if (currentRound.map.paint[y * width + x] == 1) {
+                    grid[y][x] = 4; // silver primary, concrete powder
+                }
+                if (currentRound.map.paint[y * width + x] == 2) {
+                    grid[y][x] = 2; // silver secondary, water
+                }
+                if (currentRound.map.staticMap.walls[y * width + x] == 1) {
+                    grid[y][x] = 5; // concrete
+                }
+            }
+        }
+        function isTouching(x: any, y: any, array: any) {
+            if (x > 0) {
+                for (let i in array) {
+                    if (grid[y][x - 1] == array[i]) {
+                        return true;
+                    }
+                }
+            }
+            if (x < width - 1) {
+                for (let i in array) {
+                    if (grid[y][x + 1] == array[i]) {
+                        return true;
+                    }
+                }
+            }
+            if (y > 0) {
+                for (let i in array) {
+                    if (grid[y - 1][x] == array[i]) {
+                        return true;
+                    }
+                }
+            }
+            if (y < height - 1) {
+                for (let i in array) {
+                    if (grid[y + 1][x] == array[i]) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        function forTouching(x: any, y: any, action: any) {
+            if (x > 0) {
+                action(x - 1, y);
+            }
+            if (x < width - 1) {
+                action(x + 1, y);
+            }
+            if (y > 0) {
+                action(x, y - 1);
+            }
+            if (y < height - 1) {
+                action(x, y + 1);
+            }
+        };
+        var move = function(x1: number, y1: number, x2: number, y2: number) {
+            nextGrid[y1][x1] = grid[y2][x2];
+            nextGrid[y2][x2] = grid[y1][x1];
+        }
+        function flowSearch(x: any, y: any, distance: any, h: any, isPassable: any, isMoveable: any) {
+            if (y < h) {
+                return false;
+            }
+            let left = 0;
+            let right = 0;
+            for (let i = 1; i <= distance; i++) {
+                if (left < 0) {
+        
+                }
+                else if (!isMoveable(x - i, y)) {
+                    left = -i;
+                    if (isPassable(x - i + 1, y - 1) && !isPassable(x - i, y)) {
+                        let air = true;
+                        for (let j = 1; j <= h; j++) {
+                            if (!isMoveable(x - i, y - j)) {
+                                air = false;
+                                break;
+                            }
+                        }
+                        if (air) {
+                            left = 1;
+                        }
+                    }
+                }
+                else {
+                    let air = true;
+                    for (let j = 0; j <= h; j++) {
+                        if (!isMoveable(x - i, y - j)) {
+                            air = false;
+                            break;
+                        }
+                    }
+                    if (air) {
+                        left = 1;
+                    }
+                }
+                if (right < 0) {
+        
+                }
+                else if (!isMoveable(x + i, y)) {
+                    right = -i;
+                    if (isPassable(x + i - 1, y - 1) && !isPassable(x + i, y)) {
+                        let air = true;
+                        for (let j = 1; j <= h; j++) {
+                            if (!isMoveable(x + i, y - j)) {
+                                air = false;
+                                break;
+                            }
+                        }
+                        if (air) {
+                            right = 1;
+                        }
+                    }
+                }
+                else {
+                    let air = true;
+                    for (let j = 0; j <= h; j++) {
+                        if (!isMoveable(x + i, y - j)) {
+                            air = false;
+                            break;
+                        }
+                    }
+                    if (air) {
+                        right = 1;
+                    }
+                }
+                if (left == 1 || right == 1) {
+                    if (left == 1 && right == 1) {
+                        if (Math.random() < 0.5) {
+                            return -i;
+                        }
+                        else {
+                            return i;
+                        }
+                    }
+                    else if (left == 1) {
+                        return -i;
+                    }
+                    else if (right == 1) {
+                        return i;
+                    }
+                }
+                if (left < 0 && right < 0) {
+                    // if (!isPassable(x, y - 1)) {
+                    //     let leftAir = 0;
+                    //     let rightAir = 0;
+                    //     for (let j = i; j <= distance; j++) {
+                    //         if (leftAir == 0 && !isPassable(x - j, y)) {
+                    //             leftAir = j;
+                    //         }
+                    //         if (rightAir == 0 && !isPassable(x + j, y)) {
+                    //             rightAir = j;
+                    //         }
+                    //         if (leftAir != 0 || rightAir != 0) {
+                    //             if (leftAir != 0) {
+                    //                 if (isMoveable(x - 1, y)) {
+                    //                     return -i;
+                    //                 }
+                    //             }
+                    //             else if (rightAir != 0) {
+                    //                 if (isMoveable(x + 1, y)) {
+                    //                     return i;
+                    //                 }
+                    //             }
+                    //             break;
+                    //         }
+                    //     }
+                    //     // if (left < right) {
+                    //     //     if (isMoveable(x + 1, y)) {
+                    //     //         return i;
+                    //     //     }
+                    //     //     // if (isPassable(x + 1, y) || isId(x + 1, y, WATER)) {
+                    //     //     //     return -i;
+                    //     //     // }
+                    //     // }
+                    //     // else if (right < left) {
+                    //     //     if (isMoveable(x - 1, y)) {
+                    //     //         return -i;
+                    //     //     }
+                    //     //     // if (isPassable(x - 1, y) || isId(x - 1, y, WATER)) {
+                    //     //     //     return i;
+                    //     //     // }
+                    //     // }
+                    // }
+                    if (left == -1 && right == -1) {
+                        return false;
+                    }
+                    return 0;
+                }
+            }
+            return 0;
+        };
+        function flow(x: any, y: any, distance: any, h: any, isPassable: any, isMoveable: any) {
+            if (isMoveable(x, y - 1)) {
+                move(x, y, x, y - 1);
+                return;
+            }
+            let direction = flowSearch(x, y, distance, h, isPassable, isMoveable);
+            if (direction === false) {
+            }
+            else if (direction == 0) {
+            }
+            else if (Math.abs(direction) == 1) {
+                move(x, y, x + direction, y - 1);
+            }
+            else {
+                move(x, y, x + Math.sign(direction), y);
+            }
+        };
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                if (nextGrid[y][x] != -1) {
+                    continue;
+                }
+                switch (grid[y][x]) {
+                    case 1:
+                        flow(x, y, 1, 1, function(x1: any, y1: any) {
+                            return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2 || grid[y1][x1] == 3);
+                        }, function(x1: any, y1: any) {
+                            return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2 || grid[y1][x1] == 3) && nextGrid[y1][x1] == -1;
+                        });
+                        break;
+                    case 2:
+                        let changed = false;
+                        forTouching(x, y, (x1: any, y1: any) => {
+                            if (grid[y1][x1] != 3) {
+                                return;
+                            }
+                            nextGrid[y1][x1] = 4;
+                            changed = true;
+                        });
+            
+                        if (changed) {
+                            nextGrid[y][x] = 0;
+                            break;
+                        }
+                        flow(x, y, width, 1, function(x1: any, y1: any) {
+                            return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2);
+                        }, function(x1: any, y1: any) {
+                            return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && grid[y1][x1] == 0 && nextGrid[y1][x1] == -1;
+                        });
+                        break;
+                    case 3:
+                        if (Math.random() < 0.5) {
+                            flow(x, y, width, 1, function(x1: any, y1: any) {
+                                return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 3);
+                            }, function(x1: any, y1: any) {
+                                return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && grid[y1][x1] == 0 && nextGrid[y1][x1] == -1;
+                            });
+                        }
+                        break;
+                    case 4:
+                        if (isTouching(x, y, [2])) {
+                            nextGrid[y][x] = 5;
+                            break;
+                        }
+                        flow(x, y, 1, 2, function(x1: any, y1: any) {
+                            return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2 || grid[y1][x1] == 3);
+                        }, function(x1: any, y1: any) {
+                            return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2 || grid[y1][x1] == 3) && nextGrid[y1][x1] == -1;
+                        });
+                        break;
+                }
+            }
+        }
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                switch (nextGrid[y][x]) {
+                    case 0:
+                        currentRound.map.staticMap.walls[y * width + x] = 0;
+                        currentRound.map.paint[y * width + x] = 0;
+                        break;
+                    case 1:
+                        currentRound.map.staticMap.walls[y * width + x] = 0;
+                        currentRound.map.paint[y * width + x] = 3;
+                        break;
+                    case 2:
+                        currentRound.map.staticMap.walls[y * width + x] = 0;
+                        currentRound.map.paint[y * width + x] = 2;
+                        break;
+                    case 3:
+                        currentRound.map.staticMap.walls[y * width + x] = 0;
+                        currentRound.map.paint[y * width + x] = 4;
+                        break;
+                    case 4:
+                        currentRound.map.staticMap.walls[y * width + x] = 0;
+                        currentRound.map.paint[y * width + x] = 1;
+                        break;
+                    case 5:
+                        currentRound.map.staticMap.walls[y * width + x] = 1;
+                        currentRound.map.paint[y * width + x] = 0;
+                        break;
+                }
+            }
+        }
 
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
         overlayCtx.clearRect(0, 0, overlayCtx.canvas.width, overlayCtx.canvas.height)
