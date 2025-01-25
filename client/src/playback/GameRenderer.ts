@@ -365,7 +365,7 @@ class GameRendererClass {
                             if (grid[y1][x1] != 3) {
                                 return;
                             }
-                            nextGrid[y1][x1] = 4;
+                            nextGrid[y1][x1] = 5;
                             changed = true;
                         });
             
