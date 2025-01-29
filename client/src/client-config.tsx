@@ -16,6 +16,8 @@ import {
 import { BrightButton, Button } from './components/button'
 import { useKeyboard } from './util/keyboard'
 
+import { globalGain } from './playback/GameRenderer'
+
 export type ClientConfig = typeof DEFAULT_CONFIG
 
 interface Props {
@@ -40,6 +42,7 @@ const DEFAULT_CONFIG = {
     profileGames: false,
     validateMaps: false,
     resolutionScale: 100,
+    volume: 100,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
         [Colors.TEAM_TWO]: '#fee493',
@@ -73,6 +76,7 @@ const configDescription: Record<keyof ClientConfig, string> = {
     profileGames: 'Enable saving profiling data when running games',
     validateMaps: 'Validate maps before running a game',
     resolutionScale: 'Resolution scale for the game area. Decrease to help performance.',
+    volume: 'Volume of sound effects',
     colors: ''
 }
 
@@ -284,6 +288,9 @@ const ConfigNumberElement: React.FC<{ configKey: keyof ClientConfig }> = ({ conf
                     if (configKey === 'resolutionScale') {
                         // Trigger canvas dimension update to ensure resolution is updated
                         GameRenderer.onMatchChange()
+                    }
+                    if (configKey === 'volume') {
+                        globalGain.gain.value = newVal / 100;
                     }
                 }}
                 min={10}

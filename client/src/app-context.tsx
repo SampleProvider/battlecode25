@@ -4,6 +4,8 @@ import Tournament, { DEFAULT_TOURNAMENT_STATE, TournamentState } from './playbac
 import { ClientConfig, getDefaultConfig } from './client-config'
 import { GameRenderer } from './playback/GameRenderer'
 
+import { globalGain } from './playback/GameRenderer'
+
 export interface TimelineMarker {
     round: number
 }
@@ -41,6 +43,7 @@ export const AppContextProvider: React.FC<Props> = (props) => {
     const [appState, setAppState] = React.useState(DEFAULT_APP_STATE)
 
     GameConfig.config = appState.config
+    globalGain.gain.value = GameConfig.config.volume / 100;
 
     const updateConfigValue = (key: keyof ClientConfig, newVal: any) => {
         setAppState((prevState) => ({

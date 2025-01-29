@@ -14,7 +14,7 @@ export enum CanvasLayers {
 
 // dont mind the spaghetti
 const audioCtx = new AudioContext();
-var globalGain = audioCtx.createGain();
+export var globalGain = audioCtx.createGain();
 globalGain.connect(audioCtx.destination);
 globalGain.gain.value = 1;
 
@@ -24,7 +24,7 @@ export function setNoSound(s: boolean) {
 }
 
 var buffers: any = {};
-export function playSound(name: any, gain: any) {
+export function playSound(name: any, gain: any, randomDetune?: any) {
     if (noSound) {
         return;
     }
@@ -35,9 +35,14 @@ export function playSound(name: any, gain: any) {
     if (!(buffer instanceof AudioBuffer)) {
         return false;
     }
+    var detune = 0;
+    if (randomDetune != null) {
+        detune = Math.random() * randomDetune * 2 - randomDetune;
+    }
     const sampleSource = new AudioBufferSourceNode(audioCtx, {
         buffer: buffer,
         playbackRate: 1,
+        detune: detune,
     });
     var gainNode = audioCtx.createGain();
     sampleSource.connect(gainNode);
