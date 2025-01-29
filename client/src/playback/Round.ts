@@ -11,6 +11,7 @@ export default class Round {
     public turnNumber: number = 0
     public lastSteppedRobotId: number | undefined = undefined
     public isTransient: boolean = false
+    public noSound: boolean = false
     private initialRoundState: Round | null = null
 
     constructor(

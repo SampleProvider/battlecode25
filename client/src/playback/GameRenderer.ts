@@ -17,8 +17,17 @@ const audioCtx = new AudioContext();
 var globalGain = audioCtx.createGain();
 globalGain.connect(audioCtx.destination);
 globalGain.gain.value = 1;
+
+var noSound = false;
+export function setNoSound(s: boolean) {
+    noSound = s;
+}
+
 var buffers: any = {};
 export function playSound(name: any, gain: any) {
+    if (noSound) {
+        return;
+    }
     var buffer = buffers[name];
     if (Array.isArray(buffers[name])) {
         buffer = buffers[name][Math.floor(Math.random() * buffers[name].length)];
@@ -74,6 +83,7 @@ addMultipleFiles("sweep", "static/img/audio/Sweep_attack", ".ogg.mp3", 7);
 addMultipleFiles("mop", "static/img/audio/Weak_attack", ".ogg.mp3", 4);
 addMultipleFiles("splash", "static/img/audio/water", ".ogg", 3);
 addMultipleFiles("disintegrate", "static/img/audio/Explosion", ".ogg", 4);
+addMultipleFiles("spawn", "static/img/audio/Smithing_Table", ".ogg.mp3", 3);
 getFile("static/img/audio/Hurt_Old.ogg").then((result) => {
     buffers["death"] = result;
 });
@@ -96,6 +106,12 @@ getFile("static/img/audio/Player_hurt2.ogg.mp3").then((result) => {
 getFile("static/img/audio/Player_hurt3.ogg").then((result) => {
     buffers["hurt"].push(result);
 });
+getFile("static/img/audio/Challenge_complete.ogg").then((result) => {
+    buffers["win"] = result;
+});
+// getFile("static/img/audio/Random_break.ogg").then((result) => {
+//     buffers["death"] = result;
+// });
 
 class GameRendererClass {
     private canvases: Record<CanvasLayers, HTMLCanvasElement>

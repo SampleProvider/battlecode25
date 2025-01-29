@@ -9,6 +9,8 @@ import Bodies from './Bodies'
 import * as Profiler from './Profiler'
 import * as Timeline from './Timeline'
 
+import { playSound, setNoSound } from "./GameRenderer"
+
 // Amount of rounds before a snapshot of the game state is saved for the next recalculation
 const SNAPSHOT_EVERY = 40
 
@@ -230,9 +232,15 @@ export default class Match {
     public _jumpToTurn(turn: number): void {
         if (!this.game.playable) return
 
+        var ended = this.currentRound.isEnd();
+
         this._roundSimulation()
 
         this.currentRound.jumpToTurn(turn)
+
+        if (!ended && this.currentRound.isEnd()) {
+            playSound("win", 1);
+        }
     }
 
     /**
@@ -331,6 +339,7 @@ export default class Match {
         // we are simply passing through, as they will never have any sort of backward
         // turn stepping.
         updatingRound.isTransient = true
+        setNoSound(true);
 
         while (updatingRound.roundNumber < roundNumber) {
             // Fully apply the previous round by applying each turn sequentially
@@ -348,6 +357,7 @@ export default class Match {
         }
 
         updatingRound.isTransient = false
+        setNoSound(false);
 
         this.currentRound = updatingRound
     }

@@ -418,12 +418,19 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.SpawnAction]: class SpawnAction extends Action<schema.SpawnAction> {
         apply(round: Round): void {
+            playSound("spawn", 1);
             round.bodies.spawnBodyFromAction(this.actionData)
         }
     },
     [schema.Action.DieAction]: class DieAction extends Action<schema.DieAction> {
         apply(round: Round): void {
-            playSound("death", 1);
+            const robot = round.bodies.getById(this.actionData.id())
+            if (robot.robotType == schema.RobotType.SOLDIER || robot.robotType == schema.RobotType.SPLASHER || robot.robotType == schema.RobotType.MOPPER) {
+                playSound("death", 1);
+            }
+            else {
+                playSound("disintegrate", 1);
+            }
             if (this.actionData.dieType() === schema.DieType.EXCEPTION) {
                 // TODO: revisit this
                 console.log(`Robot ${this.robotId} has died due to an exception`)
