@@ -7,6 +7,8 @@ import { vectorAdd, vectorLength, vectorMultiply, vectorSub, vectorMultiplyInPla
 import Match from './Match'
 import { getImageIfLoaded } from '../util/ImageLoader'
 
+import { playSound } from "./GameRenderer"
+
 type ActionUnion = Exclude<ReturnType<typeof unionToAction>, null>
 
 export default class Actions {
@@ -110,6 +112,9 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
         }
     },
     [schema.Action.SplashAction]: class SplashAction extends Action<schema.SplashAction> {
+        apply(round: Round): void {
+            playSound("battle noble advanced", 0.6);
+        }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const body = match.currentRound.bodies.getById(this.robotId)
             const pos = match.map.indexToLocation(this.actionData.loc())
@@ -126,6 +131,9 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
         }
     },
     [schema.Action.AttackAction]: class AttackAction extends Action<schema.AttackAction> {
+        apply(round: Round): void {
+            playSound("villager", 0.2);
+        }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const srcBody = match.currentRound.bodies.getById(this.robotId)
             const dstBody = match.currentRound.bodies.getById(this.actionData.id())
@@ -190,6 +198,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.PaintAction]: class PaintAction extends Action<schema.PaintAction> {
         apply(round: Round): void {
+            playSound("buh", 0.1);
             const teamId = round.bodies.getById(this.robotId).team.id - 1
             const paintVal = teamId * 2 + 1 + this.actionData.isSecondary()
             round.map.paint[this.actionData.loc()] = paintVal
@@ -246,6 +255,9 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
         }
     },
     [schema.Action.MopAction]: class MopAction extends Action<schema.MopAction> {
+        apply(round: Round): void {
+            playSound("code battle advanced", 0.6);
+        }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const map = match.currentRound.map
             const mainBody = match.currentRound.bodies.getById(this.robotId) // Main robot
@@ -316,6 +328,9 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
         }
     },
     [schema.Action.BuildAction]: class BuildAction extends Action<schema.BuildAction> {
+        apply(round: Round): void {
+            playSound("chess battle advanced", 0.8);
+        }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const map = match.currentRound.map
             const body = match.currentRound.bodies.getById(this.actionData.id())
