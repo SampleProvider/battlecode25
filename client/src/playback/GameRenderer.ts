@@ -19,11 +19,15 @@ globalGain.connect(audioCtx.destination);
 globalGain.gain.value = 1;
 var buffers: any = {};
 export function playSound(name: any, gain: any) {
-    if (!(buffers[name] instanceof AudioBuffer)) {
+    var buffer = buffers[name];
+    if (Array.isArray(buffers[name])) {
+        buffer = buffers[name][Math.floor(Math.random() * buffers[name].length)];
+    }
+    if (!(buffer instanceof AudioBuffer)) {
         return false;
     }
     const sampleSource = new AudioBufferSourceNode(audioCtx, {
-        buffer: buffers[name],
+        buffer: buffer,
         playbackRate: 1,
     });
     var gainNode = audioCtx.createGain();
@@ -54,6 +58,43 @@ getFile("static/img/audio/chess battle advanced.ogg").then((result) => {
 });
 getFile("static/img/audio/code battle advanced.ogg").then((result) => {
     buffers["code battle advanced"] = result;
+});
+function addMultipleFiles(name: any, filepath: any, extension: any, number: any) {
+    buffers[name] = [];
+    for (var i = 1; i <= number; i++) {
+        getFile(filepath + i + extension).then((result) => {
+            buffers[name].push(result);
+        });
+    }
+}
+// addMultipleFiles("paint", "static/img/audio/slime", ".ogg", 3);
+addMultipleFiles("paint", "static/img/audio/honey", ".ogg", 5);
+addMultipleFiles("attack", "static/img/audio/Strong_attack", ".ogg.mp3", 6);
+addMultipleFiles("sweep", "static/img/audio/Sweep_attack", ".ogg.mp3", 7);
+addMultipleFiles("mop", "static/img/audio/Weak_attack", ".ogg.mp3", 4);
+addMultipleFiles("splash", "static/img/audio/water", ".ogg", 3);
+addMultipleFiles("disintegrate", "static/img/audio/Explosion", ".ogg", 4);
+getFile("static/img/audio/Hurt_Old.ogg").then((result) => {
+    buffers["death"] = result;
+});
+getFile("static/img/audio/anvil use.ogg").then((result) => {
+    buffers["build"] = result;
+});
+getFile("static/img/audio/Random_levelup.ogg").then((result) => {
+    buffers["upgrade"] = result;
+});
+getFile("static/img/audio/Totem_of_Undying.ogg").then((result) => {
+    buffers["revive"] = result;
+});
+buffers["hurt"] = [];
+getFile("static/img/audio/Player_hurt1.ogg.mp3").then((result) => {
+    buffers["hurt"].push(result);
+});
+getFile("static/img/audio/Player_hurt2.ogg.mp3").then((result) => {
+    buffers["hurt"].push(result);
+});
+getFile("static/img/audio/Player_hurt3.ogg").then((result) => {
+    buffers["hurt"].push(result);
 });
 
 class GameRendererClass {

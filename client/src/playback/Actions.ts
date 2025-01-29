@@ -98,6 +98,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.DamageAction]: class DamageAction extends Action<schema.DamageAction> {
         apply(round: Round): void {
+            playSound("hurt", 1);
             const src = round.bodies.getById(this.robotId)
             const target = round.bodies.getById(this.actionData.id())
 
@@ -113,7 +114,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.SplashAction]: class SplashAction extends Action<schema.SplashAction> {
         apply(round: Round): void {
-            playSound("battle noble advanced", 0.6);
+            playSound("splash", 1);
         }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const body = match.currentRound.bodies.getById(this.robotId)
@@ -132,7 +133,12 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.AttackAction]: class AttackAction extends Action<schema.AttackAction> {
         apply(round: Round): void {
-            playSound("villager", 0.2);
+            const srcBody = round.bodies.getById(this.robotId)
+            if (srcBody.robotType === schema.RobotType.MOPPER) {
+                playSound("mop", 1);
+            } else {
+                playSound("attack", 1);
+            }
         }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const srcBody = match.currentRound.bodies.getById(this.robotId)
@@ -198,7 +204,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.PaintAction]: class PaintAction extends Action<schema.PaintAction> {
         apply(round: Round): void {
-            playSound("buh", 0.1);
+            playSound("paint", 1);
             const teamId = round.bodies.getById(this.robotId).team.id - 1
             const paintVal = teamId * 2 + 1 + this.actionData.isSecondary()
             round.map.paint[this.actionData.loc()] = paintVal
@@ -256,7 +262,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.MopAction]: class MopAction extends Action<schema.MopAction> {
         apply(round: Round): void {
-            playSound("code battle advanced", 0.6);
+            playSound("attack", 1);
         }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const map = match.currentRound.map
@@ -329,7 +335,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.BuildAction]: class BuildAction extends Action<schema.BuildAction> {
         apply(round: Round): void {
-            playSound("chess battle advanced", 0.8);
+            playSound("build", 1);
         }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const map = match.currentRound.map
@@ -375,6 +381,10 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
 
             const dst = round.bodies.getById(this.actionData.id())
 
+            if (dst.paint == 0 && (dst.robotType == schema.RobotType.SOLDIER || dst.robotType == schema.RobotType.SPLASHER || dst.robotType == schema.RobotType.MOPPER)) {
+                playSound("revive", 1);
+            }
+
             src.paint = Math.max(src.paint - amount, 0)
             dst.paint = Math.min(dst.paint + amount, dst.maxPaint)
         }
@@ -413,6 +423,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.DieAction]: class DieAction extends Action<schema.DieAction> {
         apply(round: Round): void {
+            playSound("death", 1);
             if (this.actionData.dieType() === schema.DieType.EXCEPTION) {
                 // TODO: revisit this
                 console.log(`Robot ${this.robotId} has died due to an exception`)
@@ -423,6 +434,10 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.UpgradeAction]: class UpgradeAction extends Action<schema.UpgradeAction> {
         apply(round: Round): void {
+            // dont play sound for the instant upgrade to level 2 on turn 1
+            if (round.roundNumber != 1) {
+                playSound("upgrade", 1);
+            }
             const towerId = this.actionData.id()
             const body = round.bodies.getById(towerId)
             body.level += 1
