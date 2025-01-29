@@ -98,7 +98,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.DamageAction]: class DamageAction extends Action<schema.DamageAction> {
         apply(round: Round): void {
-            playSound("hurt", 1);
+            playSound("hurt", 0.5);
             const src = round.bodies.getById(this.robotId)
             const target = round.bodies.getById(this.actionData.id())
 
@@ -429,7 +429,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
                 playSound("death", 1);
             }
             else {
-                playSound("disintegrate", 1);
+                playSound("disintegrate", 1.5);
             }
             if (this.actionData.dieType() === schema.DieType.EXCEPTION) {
                 // TODO: revisit this

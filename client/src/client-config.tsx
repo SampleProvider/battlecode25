@@ -76,7 +76,7 @@ const configDescription: Record<keyof ClientConfig, string> = {
     profileGames: 'Enable saving profiling data when running games',
     validateMaps: 'Validate maps before running a game',
     resolutionScale: 'Resolution scale for the game area. Decrease to help performance.',
-    volume: 'Volume of sound effects',
+    volume: 'Volume of sound effects (%)',
     colors: ''
 }
 
