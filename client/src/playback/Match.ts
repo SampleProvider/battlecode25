@@ -188,10 +188,10 @@ export default class Match {
             // This works because of the way floor works
             const deltaTurns = Math.floor(this._currentSimulationStep / MAX_SIMULATION_STEPS)
             if (this._currentSimulationStep >= MAX_SIMULATION_STEPS) {
-                this._stepTurn(deltaTurns)
+                this._stepTurn(deltaTurns, true)
                 this._currentSimulationStep = 0
             } else if (this._currentSimulationStep < 0) {
-                this._stepTurn(deltaTurns)
+                this._stepTurn(deltaTurns, true)
                 this._currentSimulationStep = MAX_SIMULATION_STEPS - 1
             }
         } else {
@@ -209,7 +209,7 @@ export default class Match {
     /**
      * Change the match's current round's turn to the current turn + delta.
      */
-    public _stepTurn(turns: number): void {
+    public _stepTurn(turns: number, enableSound?: boolean): void {
         let targetTurn = this.currentRound.turnNumber + turns
         if (this.currentRound.roundNumber === this.maxRound && turns > 0) {
             targetTurn = Math.min(targetTurn, this.currentRound.turnsLength)
@@ -223,24 +223,22 @@ export default class Match {
             targetTurn = 0
         }
 
-        this._jumpToTurn(targetTurn)
+        this._jumpToTurn(targetTurn, enableSound)
     }
 
     /**
      * Jump to a turn within the current round's turns.
      */
-    public _jumpToTurn(turn: number): void {
+    public _jumpToTurn(turn: number, enableSound?: boolean): void {
         if (!this.game.playable) return
-
-        var ended = this.currentRound.isEnd();
 
         this._roundSimulation()
 
-        this.currentRound.jumpToTurn(turn)
-
-        if (!ended && this.currentRound.isEnd()) {
-            playSound("win", 1);
+        if (!enableSound) {
+            setNoSound(true);
         }
+        this.currentRound.jumpToTurn(turn)
+        setNoSound(false);
     }
 
     /**
@@ -316,6 +314,8 @@ export default class Match {
         if (!this.game.playable) return
         if (this.snapshots.length === 0) return
 
+        var ended = this.currentRound.isEnd();
+
         this._roundSimulation()
 
         // Determine the maximum round we are allowed to jump to. If the game is
@@ -360,6 +360,10 @@ export default class Match {
         setNoSound(false);
 
         this.currentRound = updatingRound
+
+        if (!ended && this.currentRound.isEnd()) {
+            playSound("win", 1);
+        }
     }
 
     private getClosestSnapshot(roundNumber: number): Round {
