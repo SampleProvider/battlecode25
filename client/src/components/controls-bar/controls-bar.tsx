@@ -132,7 +132,8 @@ export const ControlsBar: React.FC = () => {
                     icon={<ControlIcons.SkipBackwardsIcon />}
                     tooltip={'Decrease Speed'}
                     onClick={() => GameRunner.multiplyUpdatesPerSecond(0.5)}
-                    disabled={Math.abs(targetUPS) <= 0.25}
+                    // disabled={Math.abs(targetUPS) <= 0.25}
+                    disabled={false}
                 />
                 <ControlsBarButton
                     icon={<ControlIcons.GoPreviousIcon />}
@@ -167,7 +168,8 @@ export const ControlsBar: React.FC = () => {
                     icon={<ControlIcons.SkipForwardsIcon />}
                     tooltip={'Increase Speed'}
                     onClick={() => GameRunner.multiplyUpdatesPerSecond(2)}
-                    disabled={Math.abs(targetUPS) >= 128}
+                    // disabled={Math.abs(targetUPS) >= 128}
+                    disabled={false}
                 />
                 <ControlsBarButton
                     icon={<ControlIcons.PlaybackStopIcon />}

@@ -124,7 +124,8 @@ class GameRunnerClass {
     multiplyUpdatesPerSecond(multiplier: number) {
         if (!this.match) return
         const scaled = this.targetUPS * multiplier
-        const newMag = Math.max(1 / 4, Math.min(128, Math.abs(scaled)))
+        // const newMag = Math.max(1 / 4, Math.min(128, Math.abs(scaled)))
+        const newMag = Math.abs(scaled);
         this.targetUPS = Math.sign(scaled) * newMag
         this._trigger(this._controlListeners)
     }

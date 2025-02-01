@@ -43,6 +43,7 @@ const DEFAULT_CONFIG = {
     validateMaps: false,
     resolutionScale: 100,
     volume: 100,
+    pixelSimulator: false,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
         [Colors.TEAM_TWO]: '#fee493',
@@ -77,6 +78,7 @@ const configDescription: Record<keyof ClientConfig, string> = {
     validateMaps: 'Validate maps before running a game',
     resolutionScale: 'Resolution scale for the game area. Decrease to help performance.',
     volume: 'Volume of sound effects (%)',
+    pixelSimulator: 'Pixel Simulator mode (cursed)',
     colors: ''
 }
 
@@ -293,7 +295,7 @@ const ConfigNumberElement: React.FC<{ configKey: keyof ClientConfig }> = ({ conf
                         globalGain.gain.value = newVal / 100;
                     }
                 }}
-                min={10}
+                min={0}
                 max={200}
             />
             <div className={'ml-2 text-xs'}>{configDescription[configKey] ?? configKey}</div>
