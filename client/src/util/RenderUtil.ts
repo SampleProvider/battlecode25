@@ -17,9 +17,16 @@ export const getRenderCoords = (cellX: number, cellY: number, dims: Dimension, c
 }
 
 export const getInterpolatedCoords = (prev: Vector, cur: Vector, alpha: number) => {
-    return {
-        x: cur.x * (1 - alpha) + prev.x * alpha,
-        y: cur.y * (1 - alpha) + prev.y * alpha
+    if (GameConfig.config.enableMiscCursedRendering) {
+        return {
+            x: cur.x * (1 - alpha) + prev.x * alpha,
+            y: cur.y * (1 - alpha) + prev.y * alpha
+        }
+    } else {
+        return {
+            x: prev.x * (1 - alpha) + cur.x * alpha,
+            y: prev.y * (1 - alpha) + cur.y * alpha
+        }
     }
 }
 
@@ -244,7 +251,7 @@ export const renderLine = (
     // Line
     ctx.moveTo(start.x + xShift, start.y + yShift)
     ctx.lineTo(end.x + xShift, end.y + yShift)
-    ctx.lineWidth = (options.lineWidth || 0.05) * 10
+    ctx.lineWidth = (options.lineWidth || 0.05) * (GameConfig.config.enableMiscCursedRendering ? 10 : 1)
     ctx.strokeStyle = options.color || color
     ctx.stroke()
 

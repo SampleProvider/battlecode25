@@ -45,6 +45,10 @@ const DEFAULT_CONFIG = {
     volume: 100,
     pixelSimulator: false,
     pisonFip: false,
+    enableCircles: false,
+    enableObviousSrp: false,
+    largeText: false,
+    enableMiscCursedRendering: false,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
         [Colors.TEAM_TWO]: '#fee493',
@@ -81,6 +85,10 @@ const configDescription: Record<keyof ClientConfig, string> = {
     volume: 'Volume of sound effects (%)',
     pixelSimulator: 'Pixel Simulator mode (cursed)',
     pisonFip: 'Pison Fip mode (cursed)',
+    enableCircles: 'Enable circular rendering',
+    enableObviousSrp: 'Enable obvious SRP "outlines"',
+    largeText: 'Draw larger marker and SRP countdown text',
+    enableMiscCursedRendering: 'Miscellaneus cursed rendering',
     colors: ''
 }
 

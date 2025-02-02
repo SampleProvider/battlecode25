@@ -51,7 +51,7 @@ export function playSound(name: any, gain: any, randomDetune?: any) {
     sampleSource.start(0);
     return sampleSource;
 }
-  
+
 async function getFile(filepath: any) {
     const response = await fetch(filepath);
     const arrayBuffer = await response.arrayBuffer();
@@ -144,8 +144,6 @@ class GameRendererClass {
             // oh noes
             this.canvases[layer as CanvasLayers] = canvas
         }
-        this.canvases[CanvasLayers.Background].style.filter = 'blur(1px) saturate(2) contrast(2) hue-rotate(2deg)'
-        this.canvases[CanvasLayers.Overlay].style.transform += ' skew(5deg, -2deg)'
 
         const topCanvas = Object.values(this.canvases)[Object.values(this.canvases).length - 1]
         topCanvas.onmousedown = (e) => this.canvasMouseDown(e)
@@ -302,7 +300,7 @@ class GameRendererClass {
                     action(x, y + 1);
                 }
             };
-            var move = function(x1: number, y1: number, x2: number, y2: number) {
+            var move = function (x1: number, y1: number, x2: number, y2: number) {
                 nextGrid[y1][x1] = grid[y2][x2];
                 nextGrid[y2][x2] = grid[y1][x1];
             }
@@ -314,7 +312,7 @@ class GameRendererClass {
                 let right = 0;
                 for (let i = 1; i <= distance; i++) {
                     if (left < 0) {
-            
+
                     }
                     else if (!isMoveable(x - i, y)) {
                         left = -i;
@@ -344,7 +342,7 @@ class GameRendererClass {
                         }
                     }
                     if (right < 0) {
-            
+
                     }
                     else if (!isMoveable(x + i, y)) {
                         right = -i;
@@ -463,9 +461,9 @@ class GameRendererClass {
                     }
                     switch (grid[y][x]) {
                         case 1:
-                            flow(x, y, 1, 1, function(x1: any, y1: any) {
+                            flow(x, y, 1, 1, function (x1: any, y1: any) {
                                 return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2 || grid[y1][x1] == 3);
-                            }, function(x1: any, y1: any) {
+                            }, function (x1: any, y1: any) {
                                 return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2 || grid[y1][x1] == 3) && nextGrid[y1][x1] == -1;
                             });
                             break;
@@ -478,22 +476,22 @@ class GameRendererClass {
                                 nextGrid[y1][x1] = 5;
                                 changed = true;
                             });
-                
+
                             if (changed) {
                                 nextGrid[y][x] = 0;
                                 break;
                             }
-                            flow(x, y, width, 1, function(x1: any, y1: any) {
+                            flow(x, y, width, 1, function (x1: any, y1: any) {
                                 return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2);
-                            }, function(x1: any, y1: any) {
+                            }, function (x1: any, y1: any) {
                                 return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && grid[y1][x1] == 0 && nextGrid[y1][x1] == -1;
                             });
                             break;
                         case 3:
                             if (Math.random() < 0.5) {
-                                flow(x, y, width, 1, function(x1: any, y1: any) {
+                                flow(x, y, width, 1, function (x1: any, y1: any) {
                                     return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 3);
-                                }, function(x1: any, y1: any) {
+                                }, function (x1: any, y1: any) {
                                     return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && grid[y1][x1] == 0 && nextGrid[y1][x1] == -1;
                                 });
                             }
@@ -503,9 +501,9 @@ class GameRendererClass {
                                 nextGrid[y][x] = 5;
                                 break;
                             }
-                            flow(x, y, 1, 2, function(x1: any, y1: any) {
+                            flow(x, y, 1, 2, function (x1: any, y1: any) {
                                 return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2 || grid[y1][x1] == 3);
-                            }, function(x1: any, y1: any) {
+                            }, function (x1: any, y1: any) {
                                 return (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) && (grid[y1][x1] == 0 || grid[y1][x1] == 2 || grid[y1][x1] == 3) && nextGrid[y1][x1] == -1;
                             });
                             break;
@@ -549,7 +547,7 @@ class GameRendererClass {
                 }
             }
         }
-            
+
 
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
         overlayCtx.clearRect(0, 0, overlayCtx.canvas.width, overlayCtx.canvas.height)
@@ -563,6 +561,13 @@ class GameRendererClass {
         const match = GameRunner.match
         if (!match || !ctx) return
         match.currentRound.map.staticMap.draw(ctx)
+        if (GameConfig.config.enableMiscCursedRendering) {
+            this.canvases[CanvasLayers.Background].style.filter = 'blur(1px) saturate(2) contrast(2) hue-rotate(2deg)'
+            this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%) skew(5deg, -2deg)'
+        } else {
+            this.canvases[CanvasLayers.Background].style.filter = ''
+            this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%)'
+        }
         this.render()
     }
 

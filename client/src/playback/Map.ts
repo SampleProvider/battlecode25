@@ -155,14 +155,17 @@ export class CurrentMap {
                     //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
                     // }
                     ctx.fillStyle = paintColors[paint]
-                    ctx.beginPath()
-                    if (GameConfig.config.pisonFip) {
-                        ctx.ellipse(coords.x + 0.5, coords.y + 0.5 + Math.sin(coords.x + performance.now() / 1000), 0.5 + Math.cos(coords.y + performance.now() / 1200) / 8, 0.5 + Math.sin(coords.y + performance.now() / 1200) / 8, 0, 0, Math.PI * 2)
+                    if (GameConfig.config.pisonFip || GameConfig.config.enableCircles) {
+                        ctx.beginPath()
+                        if (GameConfig.config.pisonFip) {
+                            ctx.ellipse(coords.x + 0.5, coords.y + 0.5 + Math.sin(coords.x + performance.now() / 1000), 0.5 + Math.cos(coords.y + performance.now() / 1200) / 8, 0.5 + Math.sin(coords.y + performance.now() / 1200) / 8, 0, 0, Math.PI * 2)
+                        } else {
+                            ctx.ellipse(coords.x + 0.5, coords.y + 0.5, 0.5, 0.5, 0, 0, Math.PI * 2)
+                        }
+                        ctx.fill()
                     } else {
-                        ctx.ellipse(coords.x + 0.5, coords.y + 0.5, 0.5, 0.5, 0, 0, Math.PI * 2)
+                        ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
                     }
-                    ctx.fill()
-                    // ctx.fillRect(coords.x, coords.y + Math.sin(coords.x + performance.now() / 1000), 1.0, 1.0)
                 }
 
                 if (config.showPaintMarkers) {
@@ -186,7 +189,10 @@ export class CurrentMap {
                     if (markerB) {
                         ctx.fillStyle = teamColors[1]
                         const label = markerB === 3 ? '1' : '2' // Primary/secondary
-                        ctx.font = '10px monospace'
+                        if (GameConfig.config.largeText)
+                            ctx.font = '10px monospace'
+                        else
+                            ctx.font = '1px monospace'
                         ctx.shadowColor = 'black'
                         ctx.shadowBlur = 4
                         ctx.scale(0.5, 0.5)
@@ -209,7 +215,10 @@ export class CurrentMap {
                     const label = roundsRemaining.toString()
                     ctx.fillStyle = 'white'
                     ctx.textAlign = 'right'
-                    ctx.font = '10px monospace'
+                    if (GameConfig.config.largeText)
+                        ctx.font = '10px monospace'
+                    else
+                        ctx.font = '1px monospace'
                     ctx.shadowColor = 'black'
                     ctx.shadowBlur = 8
                     ctx.scale(0.4, 0.4)
@@ -219,8 +228,13 @@ export class CurrentMap {
                     ctx.shadowBlur = 0
                     ctx.textAlign = 'start'
                 } else if (roundsRemaining === -1 && config.showSRPOutlines) {
-                    ctx.fillStyle = teamColors[srp.teamId - 1]
-                    ctx.fillRect(topLeftCoords.x, topLeftCoords.y, 5, 5)
+                    if (GameConfig.config.enableObviousSrp) {
+                        ctx.fillStyle = teamColors[srp.teamId - 1]
+                        ctx.fillRect(topLeftCoords.x, topLeftCoords.y, 5, 5)
+                    } else {
+                        ctx.strokeStyle = teamColors[srp.teamId - 1]
+                        ctx.strokeRect(topLeftCoords.x, topLeftCoords.y, 5, 5)
+                    }
                 }
             })
         }
@@ -458,11 +472,14 @@ export class StaticMap {
 
                 // Render rounded (clipped) wall
                 if (this.walls[schemaIdx]) {
-                    ctx.beginPath()
                     ctx.fillStyle = currentColors[Colors.WALLS_COLOR]
-                    ctx.arc(coords.x + 0.5, coords.y + 0.5, 0.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    // ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                    if (GameConfig.config.enableCircles) {
+                        ctx.beginPath()
+                        ctx.arc(coords.x + 0.5, coords.y + 0.5, 0.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {
+                        ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                    }
                     // renderUtils.renderRounded(ctx, i, j, this, this.walls, () => {
                     //     ctx.fillStyle = currentColors[Colors.WALLS_COLOR]
                     //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
