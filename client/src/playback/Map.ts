@@ -167,7 +167,13 @@ export class CurrentMap {
                         ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
                     }
                 }
-
+            }
+        }
+        for (let i = 0; i < dimension.width; i++) {
+            for (let j = 0; j < dimension.height; j++) {
+                const schemaIdx = this.locationToIndexUnchecked(i, j)
+                const coords = renderUtils.getRenderCoords(i, j, dimension)
+                // make sure to preserve dev spaghetti buhs
                 if (config.showPaintMarkers) {
                     // Scale text by 0.5 because sometimes 0.5px text does not work
 
@@ -175,7 +181,10 @@ export class CurrentMap {
                     if (markerA) {
                         ctx.fillStyle = teamColors[0]
                         const label = markerA === 1 ? '1' : '2' // Primary/secondary
-                        ctx.font = '10px monospace'
+                        if (GameConfig.config.largeText)
+                            ctx.font = '10px monospace'
+                        else
+                            ctx.font = '1px monospace'
                         ctx.shadowColor = 'black'
                         ctx.shadowBlur = 4
                         ctx.scale(0.5, 0.5)
