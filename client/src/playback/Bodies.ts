@@ -381,21 +381,30 @@ export class Body {
     }
 
     private drawRadii(match: Match, ctx: CanvasRenderingContext2D, lightly: boolean) {
-        // const pos = this.getInterpolatedCoords(match)
-        const pos = this.pos
+        const pos = this.getInterpolatedCoords(match)
+        const renderCoords = renderUtils.getRenderCoords(
+            pos.x,
+            pos.y,
+            match.currentRound.map.staticMap.dimension
+        )
+        // const pos = this.pos
 
         if (lightly) ctx.globalAlpha = 0.5
-        const squares = this.getAllLocationsWithinRadiusSquared(match, pos, this.metadata.actionRadiusSquared())
+        // const squares = this.getAllLocationsWithinRadiusSquared(match, pos, this.metadata.actionRadiusSquared())
         ctx.beginPath()
         ctx.strokeStyle = 'red'
         ctx.lineWidth = 0.1
-        this.drawEdges(match, ctx, lightly, squares)
+        // this.drawEdges(match, ctx, lightly, squares)
+        ctx.arc(renderCoords.x + 0.5, renderCoords.y + 0.5, Math.pow(this.metadata.actionRadiusSquared(), 2 / 4), 0, Math.PI *2)
+        ctx.stroke()
 
         ctx.beginPath()
         ctx.strokeStyle = 'blue'
         ctx.lineWidth = 0.1
-        const squares2 = this.getAllLocationsWithinRadiusSquared(match, pos, this.metadata.visionRadiusSquared())
-        this.drawEdges(match, ctx, lightly, squares2)
+        // const squares2 = this.getAllLocationsWithinRadiusSquared(match, pos, this.metadata.visionRadiusSquared())
+        // this.drawEdges(match, ctx, lightly, squares2)
+        ctx.arc(renderCoords.x + 0.5, renderCoords.y + 0.5, Math.sqrt(this.metadata.visionRadiusSquared()), 0, Math.PI *2)
+        ctx.stroke()
 
         // Currently vision/message radius are always the same
         /*
@@ -410,19 +419,20 @@ export class Body {
     }
 
     private drawIndicators(match: Match, ctx: CanvasRenderingContext2D, lighter: boolean): void {
+        ctx.setLineDash([0.2, 0.2])
         const dimension = match.currentRound.map.staticMap.dimension
         // Render indicator dots
         for (const data of this.indicatorDots) {
             ctx.globalAlpha = lighter ? 0.5 : 1
             const coords = renderUtils.getRenderCoords(data.location.x, data.location.y, dimension)
             ctx.beginPath()
-            ctx.arc(coords.x + 0.5, coords.y + 0.5, INDICATOR_DOT_SIZE, 0, 2 * Math.PI, false)
-            ctx.fillStyle = data.color
-            ctx.fill()
+            ctx.arc(coords.x + 0.5, coords.y + 0.5, INDICATOR_DOT_SIZE* 10, 0, 2 * Math.PI, false)
+            ctx.strokeStyle = data.color
+            ctx.stroke()
             ctx.globalAlpha = 1
         }
 
-        ctx.lineWidth = INDICATOR_LINE_WIDTH
+        ctx.lineWidth = INDICATOR_LINE_WIDTH * 2
         for (const data of this.indicatorLines) {
             ctx.globalAlpha = lighter ? 0.5 : 1
             const start = renderUtils.getRenderCoords(data.start.x, data.start.y, dimension)
@@ -434,6 +444,7 @@ export class Body {
             ctx.stroke()
             ctx.globalAlpha = 1
         }
+        ctx.setLineDash([])
     }
 
     private drawHealthBar(match: Match, ctx: CanvasRenderingContext2D): void {

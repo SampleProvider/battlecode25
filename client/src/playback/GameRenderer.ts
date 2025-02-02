@@ -141,8 +141,11 @@ class GameRendererClass {
             canvas.style.maxHeight = '100%'
             canvas.style.transform = 'translate(-50%, -50%)'
             canvas.style.zIndex = (Object.values(this.canvases).length + 1).toString()
+            // oh noes
             this.canvases[layer as CanvasLayers] = canvas
         }
+        this.canvases[CanvasLayers.Background].style.filter = 'blur(1px) saturate(2) contrast(2) hue-rotate(2deg)'
+        this.canvases[CanvasLayers.Overlay].style.transform += ' skew(5deg, -2deg)'
 
         const topCanvas = Object.values(this.canvases)[Object.values(this.canvases).length - 1]
         topCanvas.onmousedown = (e) => this.canvasMouseDown(e)

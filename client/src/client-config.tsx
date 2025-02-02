@@ -44,6 +44,7 @@ const DEFAULT_CONFIG = {
     resolutionScale: 100,
     volume: 100,
     pixelSimulator: false,
+    pisonFip: false,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
         [Colors.TEAM_TWO]: '#fee493',
@@ -79,6 +80,7 @@ const configDescription: Record<keyof ClientConfig, string> = {
     resolutionScale: 'Resolution scale for the game area. Decrease to help performance.',
     volume: 'Volume of sound effects (%)',
     pixelSimulator: 'Pixel Simulator mode (cursed)',
+    pisonFip: 'Pison Fip mode (cursed)',
     colors: ''
 }
 

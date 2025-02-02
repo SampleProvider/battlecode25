@@ -3,6 +3,7 @@ import { Team } from '../playback/Game'
 import { CurrentMap, Dimension, StaticMap } from '../playback/Map'
 import { Vector } from '../playback/Vector'
 import { Body } from '../playback/Bodies'
+import { GameConfig } from '../app-context'
 
 export const colorToHexString = (dColor: number) => {
     return '#' + ('000000' + dColor.toString(16)).slice(-6)
@@ -17,8 +18,8 @@ export const getRenderCoords = (cellX: number, cellY: number, dims: Dimension, c
 
 export const getInterpolatedCoords = (prev: Vector, cur: Vector, alpha: number) => {
     return {
-        x: prev.x * (1 - alpha) + cur.x * alpha,
-        y: prev.y * (1 - alpha) + cur.y * alpha
+        x: cur.x * (1 - alpha) + prev.x * alpha,
+        y: cur.y * (1 - alpha) + prev.y * alpha
     }
 }
 
@@ -231,6 +232,10 @@ export const renderLine = (
     // both lines are visible if two are rendered at the same point
     let xShift = 0.5
     let yShift = 0.5
+    if (GameConfig.config.pisonFip) {
+        xShift += Math.random() - 0.5
+        yShift += Math.random() - 0.5
+    }
     if (options.teamForOffset) {
         xShift += (options.teamForOffset.id - 1.5) * 0.15
         yShift += (options.teamForOffset.id - 1.5) * 0.15
@@ -239,7 +244,7 @@ export const renderLine = (
     // Line
     ctx.moveTo(start.x + xShift, start.y + yShift)
     ctx.lineTo(end.x + xShift, end.y + yShift)
-    ctx.lineWidth = options.lineWidth || 0.05
+    ctx.lineWidth = (options.lineWidth || 0.05) * 10
     ctx.strokeStyle = options.color || color
     ctx.stroke()
 
@@ -290,7 +295,20 @@ export const renderCenteredImage = (
     coords: Vector,
     size: number
 ) => {
-    ctx.drawImage(img, coords.x + (1 - size) / 2, coords.y + (1 - size) / 2, size, size)
+    size *= 1.2
+    if (GameConfig.config.pisonFip) {
+        // const s = [size + Math.random() * 1 - 0.5, size + Math.random() * 1 - 0.5]
+        const s = [size + Math.cos(coords.x) / 2, size + Math.sin(coords.y) / 2]
+        const x = coords.x + 0.5 + Math.random() * 0.5 - 0.25
+        const y = coords.y + 0.5 + Math.random() * 0.5 - 0.25
+        ctx.save()
+        ctx.translate(x, y)
+        ctx.rotate(x + Math.tan(y))
+        ctx.drawImage(img, -s[0] / 2, -s[1] / 2, s[0], s[1])
+        ctx.restore()
+    } else {
+        ctx.drawImage(img, coords.x + (1 - size) / 2, coords.y + (1 - size) / 2, size, size)
+    }
 }
 
 /**
@@ -302,7 +320,7 @@ export const renderCenteredImageOrLoadingIndicator = (
     coords: Vector,
     size: number
 ) => {
-    if (img) {
+    if (img && !(GameConfig.config.pisonFip && Math.random() < 0.01)) {
         renderCenteredImage(ctx, img, coords, size)
     } else {
         ctx.beginPath()

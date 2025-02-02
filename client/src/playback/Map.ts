@@ -4,13 +4,14 @@ import { Vector } from './Vector'
 import Match from './Match'
 import { MapEditorBrush, Symmetry } from '../components/sidebar/map-editor/MapEditorBrush'
 import { packVecTable, parseVecTable } from './SchemaHelpers'
-import { RuinsBrush, WallsBrush, PaintBrush } from './Brushes'
+import { RuinsBrush, WallsBrush, PaintBrush, MarkerBrush } from './Brushes'
 import { TEAM_COLOR_NAMES } from '../constants'
 import * as renderUtils from '../util/RenderUtil'
 import { getImageIfLoaded } from '../util/ImageLoader'
 import { ClientConfig } from '../client-config'
 import { Colors, currentColors, getPaintColors, getTeamColors } from '../colors'
 import Round from './Round'
+import { GameConfig } from '../app-context'
 
 export type Dimension = {
     minCorner: Vector
@@ -154,7 +155,14 @@ export class CurrentMap {
                     //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
                     // }
                     ctx.fillStyle = paintColors[paint]
-                    ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                    ctx.beginPath()
+                    if (GameConfig.config.pisonFip) {
+                        ctx.ellipse(coords.x + 0.5, coords.y + 0.5 + Math.sin(coords.x + performance.now() / 1000), 0.5 + Math.cos(coords.y + performance.now() / 1200) / 8, 0.5 + Math.sin(coords.y + performance.now() / 1200) / 8, 0, 0, Math.PI * 2)
+                    } else {
+                        ctx.ellipse(coords.x + 0.5, coords.y + 0.5, 0.5, 0.5, 0, 0, Math.PI * 2)
+                    }
+                    ctx.fill()
+                    // ctx.fillRect(coords.x, coords.y + Math.sin(coords.x + performance.now() / 1000), 1.0, 1.0)
                 }
 
                 if (config.showPaintMarkers) {
@@ -164,7 +172,7 @@ export class CurrentMap {
                     if (markerA) {
                         ctx.fillStyle = teamColors[0]
                         const label = markerA === 1 ? '1' : '2' // Primary/secondary
-                        ctx.font = '1px monospace'
+                        ctx.font = '10px monospace'
                         ctx.shadowColor = 'black'
                         ctx.shadowBlur = 4
                         ctx.scale(0.5, 0.5)
@@ -178,7 +186,7 @@ export class CurrentMap {
                     if (markerB) {
                         ctx.fillStyle = teamColors[1]
                         const label = markerB === 3 ? '1' : '2' // Primary/secondary
-                        ctx.font = '1px monospace'
+                        ctx.font = '10px monospace'
                         ctx.shadowColor = 'black'
                         ctx.shadowBlur = 4
                         ctx.scale(0.5, 0.5)
@@ -193,7 +201,7 @@ export class CurrentMap {
 
         if (config.showSRPOutlines || config.showSRPText) {
             ctx.globalAlpha = 1
-            ctx.lineWidth = 0.05
+            ctx.lineWidth = 0.1
             this.resourcePatterns.forEach((srp) => {
                 const topLeftCoords = renderUtils.getRenderCoords(srp.center.x - 2, srp.center.y + 2, this.dimension)
                 const roundsRemaining = Math.max(srp.createRound + 50 - match.currentRound.roundNumber, -1)
@@ -201,9 +209,9 @@ export class CurrentMap {
                     const label = roundsRemaining.toString()
                     ctx.fillStyle = 'white'
                     ctx.textAlign = 'right'
-                    ctx.font = '1px monospace'
+                    ctx.font = '10px monospace'
                     ctx.shadowColor = 'black'
-                    ctx.shadowBlur = 4
+                    ctx.shadowBlur = 8
                     ctx.scale(0.4, 0.4)
                     ctx.fillText(label, (topLeftCoords.x + 3) * 2.5, (topLeftCoords.y + 2.5) * 2.5)
                     ctx.scale(2.5, 2.5)
@@ -211,8 +219,8 @@ export class CurrentMap {
                     ctx.shadowBlur = 0
                     ctx.textAlign = 'start'
                 } else if (roundsRemaining === -1 && config.showSRPOutlines) {
-                    ctx.strokeStyle = teamColors[srp.teamId - 1]
-                    ctx.strokeRect(topLeftCoords.x, topLeftCoords.y, 5, 5)
+                    ctx.fillStyle = teamColors[srp.teamId - 1]
+                    ctx.fillRect(topLeftCoords.x, topLeftCoords.y, 5, 5)
                 }
             })
         }
@@ -264,7 +272,7 @@ export class CurrentMap {
     }
 
     getEditorBrushes(round: Round) {
-        const brushes: MapEditorBrush[] = [new PaintBrush(round), new RuinsBrush(round), new WallsBrush(round)]
+        const brushes: MapEditorBrush[] = [new PaintBrush(round), new MarkerBrush(round), new RuinsBrush(round), new WallsBrush(round)]
         return brushes.concat(this.staticMap.getEditorBrushes())
     }
 
@@ -450,8 +458,11 @@ export class StaticMap {
 
                 // Render rounded (clipped) wall
                 if (this.walls[schemaIdx]) {
+                    ctx.beginPath()
                     ctx.fillStyle = currentColors[Colors.WALLS_COLOR]
-                    ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                    ctx.arc(coords.x + 0.5, coords.y + 0.5, 0.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    // ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
                     // renderUtils.renderRounded(ctx, i, j, this, this.walls, () => {
                     //     ctx.fillStyle = currentColors[Colors.WALLS_COLOR]
                     //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)

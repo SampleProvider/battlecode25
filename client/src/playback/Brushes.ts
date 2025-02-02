@@ -31,42 +31,63 @@ const applyInRadius = (
         }
     }
 }
-
-const squareIntersects = (check: Vector, center: Vector, radius: number) => {
-    return (
-        check.x >= center.x - radius &&
-        check.x <= center.x + radius &&
-        check.y >= center.y - radius &&
-        check.y <= center.y + radius
-    )
+const applyInRadius2 = (
+    map: CurrentMap | StaticMap,
+    x: number,
+    y: number,
+    radius: number,
+    func: (x: number, y: number) => void
+) => {
+    for (let i = -radius; i <= radius; i++) {
+        for (let j = -radius; j <= radius; j++) {
+            if (Math.sqrt(i * i + j * j) <= radius) {
+                const target_x = x + i
+                const target_y = y + j
+                if (target_x >= 0 && target_x < map.width && target_y >= 0 && target_y < map.height) {
+                    // const target_idx = map.locationToIndex(target_x, target_y)
+                    func(target_x, target_y)
+                }
+            }
+        }
+    }
 }
 
-const checkValidRuinPlacement = (check: Vector, map: StaticMap, bodies: Bodies) => {
-    // Check if ruin is too close to the border
-    // if (check.x <= 1 || check.x >= map.width - 2 || check.y <= 1 || check.y >= map.height - 2) {
-    //     return false
-    // }
+// const squareIntersects = (check: Vector, center: Vector, radius: number) => {
+//     // return (
+//     //     check.x >= center.x - radius &&
+//     //     check.x <= center.x + radius &&
+//     //     check.y >= center.y - radius &&
+//     //     check.y <= center.y + radius
+//     // )
+//     return false
+// }
 
-    // // Check if this is a valid ruin location
-    // const idx = map.locationToIndex(check.x, check.y)
-    // const ruin = map.ruins.findIndex((l) => squareIntersects(l, check, 4))
-    // const wall = map.walls.findIndex((v, i) => !!v && squareIntersects(map.indexToLocation(i), check, 2))
-    // const paint = map.initialPaint[idx]
+// const checkValidRuinPlacement = (check: Vector, map: StaticMap, bodies: Bodies) => {
+//     // Check if ruin is too close to the border
+//     // if (check.x <= 1 || check.x >= map.width - 2 || check.y <= 1 || check.y >= map.height - 2) {
+//     //     return false
+//     // }
 
-    // let tower = undefined
-    // for (const b of bodies.bodies.values()) {
-    //     if (squareIntersects(check, b.pos, 4)) {
-    //         tower = b
-    //         break
-    //     }
-    // }
+//     // // Check if this is a valid ruin location
+//     // const idx = map.locationToIndex(check.x, check.y)
+//     // const ruin = map.ruins.findIndex((l) => squareIntersects(l, check, 4))
+//     // const wall = map.walls.findIndex((v, i) => !!v && squareIntersects(map.indexToLocation(i), check, 2))
+//     // const paint = map.initialPaint[idx]
 
-    // if (tower || ruin !== -1 || wall !== -1 || paint) {
-    //     return false
-    // }
+//     // let tower = undefined
+//     // for (const b of bodies.bodies.values()) {
+//     //     if (squareIntersects(check, b.pos, 4)) {
+//     //         tower = b
+//     //         break
+//     //     }
+//     // }
 
-    return true
-}
+//     // if (tower || ruin !== -1 || wall !== -1 || paint) {
+//     //     return false
+//     // }
+
+//     return true
+// }
 
 export class WallsBrush extends SymmetricMapEditorBrush<StaticMap> {
     private readonly bodies: Bodies
@@ -91,19 +112,19 @@ export class WallsBrush extends SymmetricMapEditorBrush<StaticMap> {
     public symmetricApply(x: number, y: number, fields: Record<string, MapEditorBrushField>) {
         const add = (idx: number) => {
             // Check if this is a valid wall location
-            const pos = this.map.indexToLocation(idx)
-            const ruin = this.map.ruins.findIndex((l) => squareIntersects(l, pos, 2))
-            const paint = this.map.initialPaint[idx]
+            // const pos = this.map.indexToLocation(idx)
+            // const ruin = this.map.ruins.findIndex((l) => squareIntersects(l, pos, 2))
+            // const paint = this.map.initialPaint[idx]
 
-            let tower = undefined
-            for (const b of this.bodies.bodies.values()) {
-                if (squareIntersects(pos, b.pos, 2)) {
-                    tower = b
-                    break
-                }
-            }
+            // let tower = undefined
+            // for (const b of this.bodies.bodies.values()) {
+            //     if (squareIntersects(pos, b.pos, 2)) {
+            //         tower = b
+            //         break
+            //     }
+            // }
 
-            if (tower || ruin !== -1 || paint) return true
+            // if (tower || ruin !== -1 || paint) return true
 
             this.map.walls[idx] = 1
         }
@@ -117,7 +138,8 @@ export class WallsBrush extends SymmetricMapEditorBrush<StaticMap> {
         applyInRadius(this.map, x, y, radius, (idx) => {
             const prevValue = this.map.walls[idx]
             if (fields.shouldAdd.value) {
-                if (add(idx)) return
+                // if (add(idx)) return
+                add(idx)
                 changes.push({ idx, prevValue })
             } else {
                 remove(idx)
@@ -140,7 +162,12 @@ export class RuinsBrush extends SymmetricMapEditorBrush<StaticMap> {
         shouldAdd: {
             type: MapEditorBrushFieldType.ADD_REMOVE,
             value: true
-        }
+        },
+        radius: {
+            type: MapEditorBrushFieldType.POSITIVE_INTEGER,
+            value: 1,
+            label: 'Radius'
+        },
     }
 
     constructor(round: Round) {
@@ -150,9 +177,9 @@ export class RuinsBrush extends SymmetricMapEditorBrush<StaticMap> {
 
     public symmetricApply(x: number, y: number, fields: Record<string, MapEditorBrushField>) {
         const add = (x: number, y: number) => {
-            if (!checkValidRuinPlacement({ x, y }, this.map, this.bodies)) {
-                return true
-            }
+            // if (!checkValidRuinPlacement({ x, y }, this.map, this.bodies)) {
+            //     return true
+            // }
 
             this.map.ruins.push({ x, y })
         }
@@ -163,12 +190,20 @@ export class RuinsBrush extends SymmetricMapEditorBrush<StaticMap> {
             this.map.ruins.splice(foundIdx, 1)
         }
 
-        if (fields.shouldAdd.value) {
-            if (add(x, y)) return null
-            return () => remove(x, y)
-        } else {
-            if (remove(x, y)) return null
-            return () => add(x, y)
+        const radius: number = fields.radius.value - 1
+        const undoFuncs: (() => any)[] = [];
+        applyInRadius2(this.map, x, y, radius, (x, y) => {
+            if (fields.shouldAdd.value) {
+                // if (add(x, y)) return null
+                add(x, y)
+                undoFuncs.push(() => remove(x, y))
+            } else {
+                if (!remove(x, y))
+                    undoFuncs.push(() => add(x, y))
+            }
+        })
+        return () => {
+            for (const fn of undoFuncs) fn()
         }
     }
 }
@@ -209,11 +244,11 @@ export class PaintBrush extends SymmetricMapEditorBrush<CurrentMap> {
     public symmetricApply(x: number, y: number, fields: Record<string, MapEditorBrushField>, robotOne: boolean) {
         const add = (idx: number, value: number) => {
             // Check if this is a valid paint location
-            const pos = this.map.indexToLocation(idx)
-            const ruin = this.map.staticMap.ruins.find((r) => r.x === pos.x && r.y === pos.y)
-            const wall = this.map.staticMap.walls[idx]
-            const body = this.bodies.getBodyAtLocation(pos.x, pos.y)
-            if (body || ruin || wall) return true
+            // const pos = this.map.indexToLocation(idx)
+            // const ruin = this.map.staticMap.ruins.find((r) => r.x === pos.x && r.y === pos.y)
+            // const wall = this.map.staticMap.walls[idx]
+            // const body = this.bodies.getBodyAtLocation(pos.x, pos.y)
+            // if (body || ruin || wall) return true
             this.map.paint[idx] = value
             this.map.staticMap.initialPaint[idx] = this.map.paint[idx]
         }
@@ -231,10 +266,91 @@ export class PaintBrush extends SymmetricMapEditorBrush<CurrentMap> {
                 let teamIdx = robotOne ? 0 : 1
                 if (fields.team.value === 1) teamIdx = 1 - teamIdx
                 const newVal = teamIdx * 2 + 1 + fields.paintType.value
-                if (add(idx, newVal)) return
+                // if (add(idx, newVal)) return
+                add(idx, newVal)
                 changes.push({ idx, prevPaint })
             } else {
                 remove(idx)
+                changes.push({ idx, prevPaint })
+            }
+        })
+
+        return () => {
+            changes.forEach(({ idx, prevPaint }) => {
+                this.map.paint[idx] = prevPaint
+                this.map.staticMap.initialPaint[idx] = prevPaint
+            })
+        }
+    }
+}
+
+export class MarkerBrush extends SymmetricMapEditorBrush<CurrentMap> {
+    private readonly bodies: Bodies
+    public readonly name = 'Markers'
+    public readonly fields = {
+        shouldAdd: {
+            type: MapEditorBrushFieldType.ADD_REMOVE,
+            value: true
+        },
+        team: {
+            type: MapEditorBrushFieldType.TEAM,
+            value: 0
+        },
+        radius: {
+            type: MapEditorBrushFieldType.POSITIVE_INTEGER,
+            value: 1,
+            label: 'Radius'
+        },
+        paintType: {
+            type: MapEditorBrushFieldType.SINGLE_SELECT,
+            value: 0,
+            label: 'Paint Type',
+            options: [
+                { value: 0, label: 'Primary' },
+                { value: 1, label: 'Secondary' }
+            ]
+        },
+        buhType: {
+            type: MapEditorBrushFieldType.SINGLE_SELECT,
+            value: 0,
+            label: 'Doesn\'t actually work lol',
+            options: [
+                { value: 0, label: 'it doesn\'t save' },
+                { value: 1, label: 'we\'re not modifying the whole schema for this' }
+            ]
+        }
+    }
+
+    constructor(round: Round) {
+        super(round.map)
+        this.bodies = round.bodies
+    }
+
+    public symmetricApply(x: number, y: number, fields: Record<string, MapEditorBrushField>, robotOne: boolean) {
+        const add = (idx: number, team: number, value: number) => {
+            // Check if this is a valid paint location
+            // const pos = this.map.indexToLocation(idx)
+            // const ruin = this.map.staticMap.ruins.find((r) => r.x === pos.x && r.y === pos.y)
+            // const wall = this.map.staticMap.walls[idx]
+            // const body = this.bodies.getBodyAtLocation(pos.x, pos.y)
+            // if (body || ruin || wall) return true
+            this.map.markers[team][idx] = value
+        }
+
+        const remove = (idx: number, team: number) => {
+            this.map.markers[team][idx] = 0
+        }
+
+        const radius: number = fields.radius.value - 1
+        const changes: { idx: number; prevPaint: number }[] = []
+        applyInRadius(this.map, x, y, radius, (idx) => {
+            const prevPaint = this.map.paint[idx]
+            if (fields.shouldAdd.value) {
+                // very buh
+                add(idx, fields.team.value, fields.team.value * 2 + 1 + fields.paintType.value)
+                changes.push({ idx, prevPaint })
+            } else {
+                remove(idx, fields.team.value)
                 changes.push({ idx, prevPaint })
             }
         })
@@ -259,6 +375,11 @@ export class TowerBrush extends SymmetricMapEditorBrush<StaticMap> {
         team: {
             type: MapEditorBrushFieldType.TEAM,
             value: 0
+        },
+        radius: {
+            type: MapEditorBrushFieldType.POSITIVE_INTEGER,
+            value: 1,
+            label: 'Radius'
         },
         towerType: {
             type: MapEditorBrushFieldType.SINGLE_SELECT,
@@ -286,9 +407,9 @@ export class TowerBrush extends SymmetricMapEditorBrush<StaticMap> {
 
         const add = (x: number, y: number, team: Team) => {
             const pos = { x, y }
-            if (!checkValidRuinPlacement(pos, this.map, this.bodies)) {
-                return null
-            }
+            // if (!checkValidRuinPlacement(pos, this.map, this.bodies)) {
+            //     return null
+            // }
 
             const id = this.bodies.getNextID()
             this.bodies.spawnBodyFromValues(id, towerType, team, pos)
@@ -307,17 +428,23 @@ export class TowerBrush extends SymmetricMapEditorBrush<StaticMap> {
             return team
         }
 
-        if (isTower) {
-            let teamIdx = robotOne ? 0 : 1
-            if (fields.team.value === 1) teamIdx = 1 - teamIdx
-            const team = this.bodies.game.teams[teamIdx]
-            const id = add(x, y, team)
-            if (id) return () => this.bodies.removeBody(id)
-            return null
-        } else {
-            const team = remove(x, y)
-            if (!team) return null
-            return () => add(x, y, team)
+        const radius: number = fields.radius.value - 1
+        const undoFuncs: (() => any)[] = [];
+        applyInRadius2(this.map, x, y, radius, (x, y) => {
+            if (isTower) {
+                let teamIdx = robotOne ? 0 : 1
+                if (fields.team.value === 1) teamIdx = 1 - teamIdx
+                const team = this.bodies.game.teams[teamIdx]
+                const id = add(x, y, team)
+                if (id) undoFuncs.push(() => this.bodies.removeBody(id))
+            } else {
+                const team = remove(x, y)
+                if (team !== null)
+                    undoFuncs.push(() => add(x, y, team))
+            }
+        })
+        return () => {
+            for (const fn of undoFuncs) fn()
         }
     }
 }

@@ -14,6 +14,7 @@ import { ConfirmDialog } from '../../confirm-dialog'
 import GameRunner, { useRound } from '../../../playback/GameRunner'
 import { GameRenderer } from '../../../playback/GameRenderer'
 import { RingBuffer } from '../../../util/ring-buffer'
+import { GameConfig } from '../../../app-context'
 
 type MapParams = {
     width: number
@@ -141,22 +142,25 @@ export const MapEditorPage: React.FC<Props> = (props) => {
         clearUndoStack()
     }
 
+    // spaghetiti
     if (intervalSet) {
         clearInterval(intervalSet);
     }
-    intervalSet = setInterval(function() {
+    if (GameConfig.config.pixelSimulator) {
+        intervalSet = setInterval(function () {
             if (canvasMouseDown && hoveredTile) {
                 applyBrush(hoveredTile)
             }
             else {
                 GameRenderer.fullRender()
             }
-        }, 1000/60);
+        }, 1000 / 60);
+    } else {
+        useEffect(() => {
+            if (canvasMouseDown && hoveredTile) applyBrush(hoveredTile)
+        }, [canvasMouseDown, hoveredTile])
+    }
 
-    // useEffect(() => {
-    //     if (canvasMouseDown && hoveredTile) applyBrush(hoveredTile)
-    // // }, [canvasMouseDown, hoveredTile])
-    // })
 
     useEffect(() => {
         if (props.open) {
