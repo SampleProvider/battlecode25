@@ -50,6 +50,7 @@ const DEFAULT_CONFIG = {
     enableObviousSrp: false,
     largeText: false,
     enableMiscCursedRendering: false,
+    uselessExceededBytecode: false,
     enableOhNoesCanvas: false,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
@@ -91,6 +92,7 @@ const configDescription: Record<keyof ClientConfig, string> = {
     enableObviousSrp: 'Enable obvious SRP "outlines"',
     largeText: 'Draw larger marker and SRP countdown text',
     enableMiscCursedRendering: 'Miscellaneus cursed rendering',
+    uselessExceededBytecode: 'Make bytecode limit exceeded highlight useless',
     enableOhNoesCanvas: 'oh noes',
     colors: ''
 }
@@ -132,7 +134,7 @@ export const ConfigPage: React.FC<Props> = (props) => {
 
     return (
         <div className={'flex flex-col'}>
-            <div className="mb-2">Edit Client Config:</div>
+            <div className="mb-2">Edit Buh:</div>
             {Object.entries(DEFAULT_CONFIG).map(([k, v]) => {
                 const key = k as keyof ClientConfig
                 if (typeof v === 'string') return <ConfigStringElement configKey={key} key={key} />

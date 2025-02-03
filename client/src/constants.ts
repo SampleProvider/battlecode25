@@ -1,6 +1,6 @@
-export const CLIENT_VERSION = '3.1.0'
+export const CLIENT_VERSION = '48.-2.undefined'
 export const SPEC_VERSION = '1'
-export const BATTLECODE_YEAR: number = 2025
+export const BATTLECODE_YEAR: number = (Math.random() < 0.2) ? Math.PI : Math.floor(Math.random() * 10 + 1990)
 export const MAP_SIZE_RANGE = {
     min: 1,
     max: 100

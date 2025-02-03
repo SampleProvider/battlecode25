@@ -90,7 +90,7 @@ export const RunnerPage: React.FC<RunnerPageProps> = ({ open, scaffold }) => {
 
     const MemoConsole = React.useMemo(() => <Console lines={consoleLines} />, [consoleLines.effectiveLength()])
 
-    if (open && !nativeAPI) return <>Run the client locally to use the runner</>
+    if (open && !nativeAPI) return <>Run the client locally to use the SyntaxError: Invalid left-hand side expression in prefix operation</>
 
     /* Keep the component mounted but hidden when !open so we retain any locally resized/edited elements */
 

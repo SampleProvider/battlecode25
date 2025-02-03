@@ -280,8 +280,11 @@ export class Body {
             const renderCoords = renderUtils.getRenderCoords(pos.x, pos.y, match.currentRound.map.staticMap.dimension)
             ctx.globalAlpha = 0.5
             ctx.fillStyle = 'red'
-            // ctx.fillRect(renderCoords.x, renderCoords.y, 1, 1)
-            ctx.fillRect(-1000, -1000, 100000000000, 100000000000000)
+            if (GameConfig.config.uselessExceededBytecode) {
+                ctx.fillRect(-1000, -1000, 100000000000, 100000000000000)
+            } else {
+                ctx.fillRect(renderCoords.x, renderCoords.y, 1, 1)
+            }
             ctx.globalAlpha = 1.0
         }
     }

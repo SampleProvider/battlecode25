@@ -147,17 +147,17 @@ export const Sidebar: React.FC = () => {
         if (showTournamentFeatures) {
             return [
                 { name: 'Game', page: PageType.GAME },
-                { name: 'Queue', page: PageType.QUEUE },
-                { name: 'Tournament', page: PageType.TOURNAMENT }
+                { name: 'Stack', page: PageType.QUEUE },
+                { name: 'Competition', page: PageType.TOURNAMENT }
             ]
         }
         return [
-            { name: 'Game', page: PageType.GAME },
-            { name: 'Queue', page: PageType.QUEUE },
-            { name: 'Runner', page: PageType.RUNNER },
-            { name: 'Map Editor', page: PageType.MAP_EDITOR },
-            { name: 'Help', page: PageType.HELP },
-            { name: 'Config', page: PageType.CONFIG }
+            { name: 'Game.ts', page: PageType.GAME },
+            { name: 'Stack', page: PageType.QUEUE },
+            { name: 'SyntaxError: Invalid left-hand side expression in prefix operation', page: PageType.RUNNER },
+            { name: 'Map Borker', page: PageType.MAP_EDITOR },
+            { name: 'No Help', page: PageType.HELP },
+            { name: 'Buh', page: PageType.CONFIG }
         ]
     }, [showTournamentFeatures])
 
@@ -179,7 +179,7 @@ export const Sidebar: React.FC = () => {
                     <div className="flex justify-between items-center">
                         {open && (
                             <>
-                                <p className="px-2 whitespace-nowrap font-extrabold text-xl">{`BATTLECODE ${BATTLECODE_YEAR}`}</p>
+                                <p className="px-2 whitespace-nowrap font-extrabold text-xl">{`Windows ${BATTLECODE_YEAR}`}</p>
                                 <p className="text-xs">{`v${CLIENT_VERSION}`}</p>
                             </>
                         )}
@@ -200,20 +200,39 @@ export const Sidebar: React.FC = () => {
                         <>
                             <UpdateWarning />
                             <div className="flex flex-row flex-wrap justify-between mb-2">
-                                {activeSidebarButtons.map((sidebarButton) => (
-                                    <div
-                                        key={sidebarButton.page}
-                                        className={
-                                            'w-[32%] text-center text-sm py-1 my-1 cursor-pointer hover:bg-lightHighlight border-b-2 ' +
-                                            (page == sidebarButton.page
-                                                ? 'border-gray-200 opacity-100'
-                                                : 'border-gray-400 opacity-60')
-                                        }
-                                        onClick={() => setPage(sidebarButton.page)}
-                                    >
-                                        {sidebarButton.name}
-                                    </div>
-                                ))}
+                                {activeSidebarButtons.map((sidebarButton) => {
+                                    if (sidebarButton.page == PageType.RUNNER) {
+                                        return (
+                                            <div
+                                                key={sidebarButton.page}
+                                                className={
+                                                    'w-[32%] text-center text-sm py-1 my-1 cursor-pointer hover:bg-lightHighlight border-b-2 ' +
+                                                    (page == sidebarButton.page
+                                                        ? 'border-gray-200 opacity-100'
+                                                        : 'border-gray-400 opacity-60')
+                                                }
+                                                onClick={() => setPage(sidebarButton.page)}
+                                                style={{fontSize: '6px'}}
+                                            >
+                                                {sidebarButton.name}
+                                            </div>
+                                        )
+                                    }
+                                    return (
+                                        <div
+                                            key={sidebarButton.page}
+                                            className={
+                                                'w-[32%] text-center text-sm py-1 my-1 cursor-pointer hover:bg-lightHighlight border-b-2 ' +
+                                                (page == sidebarButton.page
+                                                    ? 'border-gray-200 opacity-100'
+                                                    : 'border-gray-400 opacity-60')
+                                            }
+                                            onClick={() => setPage(sidebarButton.page)}
+                                        >
+                                            {sidebarButton.name}
+                                        </div>
+                                    )
+                                })}
                             </div>
                         </>
                     )}
