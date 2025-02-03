@@ -1,4 +1,4 @@
-# Battlecode 2025
+# Battlecode 2025 not cursed
 
 🚩
 
