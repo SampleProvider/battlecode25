@@ -155,7 +155,7 @@ export class CurrentMap {
                     //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
                     // }
                     ctx.fillStyle = paintColors[paint]
-                    if (GameConfig.config.pisonFip || GameConfig.config.enableCircles) {
+                    if (GameConfig.config.enableCircles) {
                         ctx.beginPath()
                         if (GameConfig.config.pisonFip) {
                             ctx.ellipse(coords.x + 0.5, coords.y + 0.5 + Math.sin(coords.x + performance.now() / 1000), 0.5 + Math.cos(coords.y + performance.now() / 1200) / 8, 0.5 + Math.sin(coords.y + performance.now() / 1200) / 8, 0, 0, Math.PI * 2)
@@ -164,7 +164,13 @@ export class CurrentMap {
                         }
                         ctx.fill()
                     } else {
-                        ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                        if (GameConfig.config.pisonFip) {
+                            const w = 1 + Math.cos(coords.y + performance.now() / 1200) / 8
+                            const h = 1 + Math.sin(coords.y + performance.now() / 1200) / 8
+                            ctx.fillRect(coords.x - w / 2 + 0.5, coords.y - h / 2 + 0.5 + Math.sin(coords.x + performance.now() / 1000), w, h)
+                        } else {
+                            ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                        }
                     }
                 }
             }

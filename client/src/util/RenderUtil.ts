@@ -307,7 +307,7 @@ export const renderCenteredImage = (
         // const s = [size + Math.random() * 1 - 0.5, size + Math.random() * 1 - 0.5]
         const s = [size + Math.cos(coords.x) / 2, size + Math.sin(coords.y) / 2]
         const x = coords.x + 0.5 + Math.random() * 0.5 - 0.25
-        const y = coords.y + 0.5 + Math.random() * 0.5 - 0.25
+        const y = coords.y + 0.5 + Math.random() * 0.5 - 0.25 + Math.sin(coords.x + performance.now() / 1000)
         ctx.save()
         ctx.translate(x, y)
         ctx.rotate(x + Math.tan(y))

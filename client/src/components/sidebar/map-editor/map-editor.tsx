@@ -29,7 +29,7 @@ interface Props {
 
 const UNDO_STACK_SIZE = 100
 
-var intervalSet: any;
+let spaghettiId: number = -1
 
 export const MapEditorPage: React.FC<Props> = (props) => {
     const round = useRound()
@@ -143,24 +143,33 @@ export const MapEditorPage: React.FC<Props> = (props) => {
     }
 
     // spaghetiti
-    if (intervalSet) {
-        clearInterval(intervalSet);
-    }
+    const thisId = ++spaghettiId
     if (GameConfig.config.pixelSimulator) {
-        intervalSet = setInterval(function () {
+        const draw = () => {
+            if (spaghettiId !== thisId) return
             if (canvasMouseDown && hoveredTile) {
                 applyBrush(hoveredTile)
-            }
-            else {
+            } else {
                 GameRenderer.fullRender()
             }
-        }, 1000 / 60);
+            window.requestAnimationFrame(() => draw())
+        }
+        window.requestAnimationFrame(() => draw())
+    } else if (GameConfig.config.pisonFip) {
+        const draw = () => {
+            if (spaghettiId !== thisId) return
+            GameRenderer.fullRender()
+            window.requestAnimationFrame(() => draw())
+        }
+        window.requestAnimationFrame(() => draw())
+        useEffect(() => {
+            if (canvasMouseDown && hoveredTile) applyBrush(hoveredTile)
+        }, [canvasMouseDown, hoveredTile])
     } else {
         useEffect(() => {
             if (canvasMouseDown && hoveredTile) applyBrush(hoveredTile)
         }, [canvasMouseDown, hoveredTile])
     }
-
 
     useEffect(() => {
         if (props.open) {
