@@ -11,7 +11,8 @@ import {
     updateGlobalColor,
     getGlobalColor,
     resetGlobalColors,
-    DEFAULT_GLOBAL_COLORS
+    DEFAULT_GLOBAL_COLORS,
+    definitelyResetGlobalColors
 } from './colors'
 import { BrightButton, Button } from './components/button'
 import { useKeyboard } from './util/keyboard'
@@ -49,6 +50,7 @@ const DEFAULT_CONFIG = {
     enableObviousSrp: false,
     largeText: false,
     enableMiscCursedRendering: false,
+    enableOhNoesCanvas: false,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
         [Colors.TEAM_TWO]: '#fee493',
@@ -89,6 +91,7 @@ const configDescription: Record<keyof ClientConfig, string> = {
     enableObviousSrp: 'Enable obvious SRP "outlines"',
     largeText: 'Draw larger marker and SRP countdown text',
     enableMiscCursedRendering: 'Miscellaneus cursed rendering',
+    enableOhNoesCanvas: 'oh noes',
     colors: ''
 }
 
@@ -97,7 +100,7 @@ export function getDefaultConfig(): ClientConfig {
     for (const key in config) {
         const value = localStorage.getItem('config' + key)
         if (value) {
-            ;(config[key as keyof ClientConfig] as any) = JSON.parse(value)
+            ; (config[key as keyof ClientConfig] as any) = JSON.parse(value)
         }
     }
 
@@ -170,6 +173,20 @@ const ColorConfig = () => {
                 <BrightButton
                     className=""
                     onClick={() => {
+                        definitelyResetGlobalColors()
+
+                        context.setState((prevState) => ({
+                            ...prevState,
+                            config: { ...prevState.config, colors: { ...Object.keys(DEFAULT_GLOBAL_COLORS).reduce((o: any, c) => { o[c] = '#3C70FF00'; return o }, {}) } }
+                        }))
+                    }}
+                >
+                    "Reset" Colours
+                </BrightButton>
+                <BrightButton
+                    className=""
+                    style={{ width: '2px', height: '2px', fontSize: '1px', padding: '1px' }}
+                    onClick={() => {
                         resetGlobalColors()
 
                         context.setState((prevState) => ({
@@ -178,7 +195,7 @@ const ColorConfig = () => {
                         }))
                     }}
                 >
-                    Reset Colors
+                    Actually reset colors
                 </BrightButton>
             </div>
         </>
@@ -224,6 +241,10 @@ const SingleColorPicker = (props: { displayName: string; colorName: Colors }) =>
     }
 
     const resetColor = () => {
+        onChange({ hex: '#3C70FF00' })
+    }
+
+    const actuallyResetColor = () => {
         onChange({ hex: DEFAULT_GLOBAL_COLORS[props.colorName as Colors] })
     }
 
@@ -258,6 +279,9 @@ const SingleColorPicker = (props: { displayName: string; colorName: Colors }) =>
                     >
                         {hoveredClose ? <IoCloseCircle /> : <IoCloseCircleOutline />}
                     </IconContext.Provider>
+                </div>
+                <div onClick={() => actuallyResetColor()} style={{width: '1px', height: '1px', backgroundColor: '#000A'}}>
+
                 </div>
             </div>
             <div ref={ref} className={'width: w-min'}>

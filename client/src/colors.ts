@@ -51,6 +51,13 @@ export const resetGlobalColors = () => {
     }
 }
 
+export const definitelyResetGlobalColors = () => {
+    for (const key in currentColors) {
+        const typedKey = key as Colors
+        updateGlobalColor(typedKey, '#3C70FF00')
+    }
+}
+
 export const getPaintColors = () => {
     return [
         '#00000000',

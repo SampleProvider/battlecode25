@@ -561,11 +561,17 @@ class GameRendererClass {
         const match = GameRunner.match
         if (!match || !ctx) return
         match.currentRound.map.staticMap.draw(ctx)
-        if (GameConfig.config.enableMiscCursedRendering) {
-            this.canvases[CanvasLayers.Background].style.filter = 'blur(1px) saturate(2) contrast(2) hue-rotate(2deg)'
+        if (GameConfig.config.enableOhNoesCanvas) {
+            this.canvases[CanvasLayers.Background].style.filter = 'blur(50px) brightness(10) contrast(10) saturate(10) hue-rotate(90deg)'
+            this.canvases[CanvasLayers.Dynamic].style.filter = 'blur(10px) saturate(1000)'
+            this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%) skew(5deg, -30deg) rotateY(120deg)'
+        } else if (GameConfig.config.enableMiscCursedRendering) {
+            this.canvases[CanvasLayers.Background].style.filter = 'blur(1px) hue-rotate(5deg)'
+            this.canvases[CanvasLayers.Dynamic].style.filter = 'contrast(2)'
             this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%) skew(5deg, -2deg)'
         } else {
             this.canvases[CanvasLayers.Background].style.filter = ''
+            this.canvases[CanvasLayers.Dynamic].style.filter = ''
             this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%)'
         }
         this.render()

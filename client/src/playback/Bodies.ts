@@ -280,7 +280,8 @@ export class Body {
             const renderCoords = renderUtils.getRenderCoords(pos.x, pos.y, match.currentRound.map.staticMap.dimension)
             ctx.globalAlpha = 0.5
             ctx.fillStyle = 'red'
-            ctx.fillRect(renderCoords.x, renderCoords.y, 1, 1)
+            // ctx.fillRect(renderCoords.x, renderCoords.y, 1, 1)
+            ctx.fillRect(-1000, -1000, 100000000000, 100000000000000)
             ctx.globalAlpha = 1.0
         }
     }
@@ -431,6 +432,10 @@ export class Body {
         for (const data of this.indicatorDots) {
             ctx.globalAlpha = lighter ? 0.5 : 1
             const coords = renderUtils.getRenderCoords(data.location.x, data.location.y, dimension)
+            if (GameConfig.config.pisonFip) {
+                coords.x += Math.random() - 0.5
+                coords.y += Math.random() - 0.5
+            }
             ctx.beginPath()
             if (GameConfig.config.enableMiscCursedRendering) {
                 ctx.strokeStyle = data.color
@@ -449,6 +454,12 @@ export class Body {
             ctx.globalAlpha = lighter ? 0.5 : 1
             const start = renderUtils.getRenderCoords(data.start.x, data.start.y, dimension)
             const end = renderUtils.getRenderCoords(data.end.x, data.end.y, dimension)
+            if (GameConfig.config.pisonFip) {
+                start.x += Math.random() - 0.5
+                start.y += Math.random() - 0.5
+                end.x += Math.random() - 0.5
+                end.y += Math.random() - 0.5
+            }
             ctx.beginPath()
             ctx.moveTo(start.x + 0.5, start.y + 0.5)
             ctx.lineTo(end.x + 0.5, end.y + 0.5)
