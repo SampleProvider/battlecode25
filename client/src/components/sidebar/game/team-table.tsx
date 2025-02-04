@@ -6,6 +6,7 @@ import { TeamRoundStat } from '../../../playback/RoundStat'
 import { DoubleChevronUpIcon } from '../../../icons/chevron'
 import { CurrentMap } from '../../../playback/Map'
 import { useRound } from '../../../playback/GameRunner'
+import { GameConfig } from '../../../app-context'
 
 interface UnitsIconProps {
     teamIdx: 0 | 1
@@ -47,14 +48,25 @@ interface ResourceTableProps {
 }
 
 export const ResourceTable: React.FC<ResourceTableProps> = ({ map, teamStat, teamIdx }) => {
-    let moneyAmount = 0
-    let paintPercent = 0
-    let patternAmount = 0
+    let moneyAmount: any = 0
+    let paintPercent: any = 0
+    let patternAmount: any = 0
 
     if (map && teamStat) {
         paintPercent = teamStat.paintPercent
         moneyAmount = teamStat.moneyAmount
         patternAmount = teamStat.resourcePatterns
+    }
+
+    if (teamIdx == 0 && GameConfig.config.clogWillSmog && !GameConfig.config.clogWillSmogA) {
+        moneyAmount = "???";
+        paintPercent = "???";
+        patternAmount = "???";
+    }
+    if (teamIdx == 1 && GameConfig.config.clogWillSmog && !GameConfig.config.clogWillSmogB) {
+        moneyAmount = "???";
+        paintPercent = "???";
+        patternAmount = "???";
     }
 
     const teamName = TEAM_COLOR_NAMES[teamIdx].toLowerCase()

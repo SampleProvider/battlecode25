@@ -2,7 +2,7 @@ import React from 'react'
 import { TeamTable } from './team-table'
 import { ResourceGraph } from './resource-graph'
 import { useSearchParamBool } from '../../../app-search-params'
-import { useAppContext } from '../../../app-context'
+import { GameConfig, useAppContext } from '../../../app-context'
 import { SectionHeader } from '../../section-header'
 import { Crown } from '../../../icons/crown'
 import { BiMedal } from 'react-icons/bi'
@@ -51,13 +51,22 @@ export const GamePage: React.FC<Props> = React.memo((props) => {
         let showGameWinner = !context.state.tournament || (showMatchWinner && winCount >= 3)
         showGameWinner = showGameWinner && !!game && game.winner === game.teams[teamIdx]
 
+        var name = game?.teams[teamIdx].name ?? NO_GAME_TEAM_NAME;
+
+        if (teamIdx == 0 && GameConfig.config.clogWillSmog && !GameConfig.config.clogWillSmogA) {
+            name = NO_GAME_TEAM_NAME;
+        }
+        if (teamIdx == 1 && GameConfig.config.clogWillSmog && !GameConfig.config.clogWillSmogB) {
+            name = NO_GAME_TEAM_NAME;
+        }
+
         return (
             <div
                 className={
                     'relative w-full py-2 px-3 text-black text-center ' + (teamIdx == 0 ? 'bg-team0' : 'bg-team1')
                 }
             >
-                <div>{game?.teams[teamIdx].name ?? NO_GAME_TEAM_NAME}</div>
+                <div>{name}</div>
                 <div className="absolute top-2 left-3">
                     <div className="relative flex items-center w-[24px] h-[24px]">
                         {showMatchWinner && (

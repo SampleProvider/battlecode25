@@ -2,6 +2,8 @@ import { schema } from 'battlecode-schema'
 import Game, { Team } from './Game'
 import assert from 'assert'
 import Round from './Round'
+import { clogWillSmogGrid } from './GameRenderer'
+import { GameConfig } from '../app-context'
 
 const EMPTY_ROBOT_COUNTS: Record<schema.RobotType, number> = {
     [schema.RobotType.NONE]: 0,
@@ -114,6 +116,12 @@ export default class RoundStat {
 
             // Count number of alive robots
             if (body.dead) continue
+
+            if (GameConfig.config.clogWillSmog) {
+                if (clogWillSmogGrid[body.pos.y] && !clogWillSmogGrid[body.pos.y][body.pos.x]) {
+                    continue;
+                }
+            }
 
             teamStat.robotCounts[body.robotType]++
             teamStat.robotPaints[body.robotType] += body.paint

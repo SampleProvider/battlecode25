@@ -64,8 +64,27 @@ export default class Actions {
     draw(match: Match, ctx: CanvasRenderingContext2D) {
         for (const action of this.actions) {
             if (GameConfig.config.clogWillSmog) {
+                var canSee = false;
                 var robot = match.currentRound.bodies.getById(action.robotId);
-                if (!clogWillSmogGrid[robot.pos.y][robot.pos.x]) {
+                // buh how to fix
+                // @ts-ignore
+                if (action.actionData.id != null) {
+                    // dont mind the spaghetti
+                    try {
+                        // @ts-ignore
+                        var robot2 = match.currentRound.bodies.getById(action.actionData.id());
+                        if (clogWillSmogGrid[robot2.pos.y][robot2.pos.x]) {
+                            canSee = true;
+                        }
+                    }
+                    catch (err) {
+
+                    }
+                }
+                if (clogWillSmogGrid[robot.pos.y][robot.pos.x]) {
+                    canSee = true;
+                }
+                if (!canSee) {
                     continue;
                 }
             }
@@ -77,7 +96,7 @@ export default class Actions {
 export class Action<T extends ActionUnion> {
     constructor(
         public robotId: number,
-        protected actionData: T,
+        public actionData: T,
         public duration: number = 1
     ) {}
 
