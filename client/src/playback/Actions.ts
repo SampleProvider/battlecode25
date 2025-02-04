@@ -7,7 +7,8 @@ import { vectorAdd, vectorLength, vectorMultiply, vectorSub, vectorMultiplyInPla
 import Match from './Match'
 import { getImageIfLoaded } from '../util/ImageLoader'
 
-import { playSound } from "./GameRenderer"
+import { clogWillSmogGrid, playSound } from "./GameRenderer"
+import { GameConfig } from '../app-context'
 
 type ActionUnion = Exclude<ReturnType<typeof unionToAction>, null>
 
@@ -62,6 +63,12 @@ export default class Actions {
 
     draw(match: Match, ctx: CanvasRenderingContext2D) {
         for (const action of this.actions) {
+            if (GameConfig.config.clogWillSmog) {
+                var robot = match.currentRound.bodies.getById(action.robotId);
+                if (!clogWillSmogGrid[robot.pos.y][robot.pos.x]) {
+                    continue;
+                }
+            }
             action.draw(match, ctx)
         }
     }
@@ -69,7 +76,7 @@ export default class Actions {
 
 export class Action<T extends ActionUnion> {
     constructor(
-        protected robotId: number,
+        public robotId: number,
         protected actionData: T,
         public duration: number = 1
     ) {}

@@ -5,6 +5,7 @@ import { Vector } from './Vector'
 import assert from 'assert'
 import { GameConfig } from '../app-context'
 import { loadImage } from '../util/ImageLoader'
+import { Team } from './Game'
 
 export enum CanvasLayers {
     Background,
@@ -117,6 +118,8 @@ getFile("static/img/audio/Challenge_complete.ogg").then((result) => {
 // getFile("static/img/audio/Random_break.ogg").then((result) => {
 //     buffers["death"] = result;
 // });
+
+export var clogWillSmogGrid: any = [];
 
 class GameRendererClass {
     private canvases: Record<CanvasLayers, HTMLCanvasElement>
@@ -545,6 +548,61 @@ class GameRendererClass {
                             currentRound.map.paint[y * width + x] = 0;
                             currentRound.map.staticMap.initialPaint[y * width + x] = 0;
                             break;
+                    }
+                }
+            }
+        }
+
+        if (GameConfig.config.clogWillSmog) {
+            clogWillSmogGrid = [];
+            const width = currentRound.map.width;
+            const height = currentRound.map.height;
+            for (var y = 0; y < height; y++) {
+                clogWillSmogGrid[y] = [];
+                for (var x = 0; x < width; x++) {
+                    clogWillSmogGrid[y][x] = false;
+                }
+            }
+
+            for (var [key, value] of currentRound.bodies.bodies) {
+                if (value.team.id == 1) {
+                    if (GameConfig.config.clogWillSmogA) {
+                        var radius = 20;
+                        const ceiledRadius = Math.ceil(Math.sqrt(radius)) + 1
+                        const minX = Math.max(value.pos.x - ceiledRadius, 0)
+                        const minY = Math.max(value.pos.y - ceiledRadius, 0)
+                        const maxX = Math.min(value.pos.x + ceiledRadius, width - 1)
+                        const maxY = Math.min(value.pos.y + ceiledRadius, height - 1)
+                
+                        for (let x = minX; x <= maxX; x++) {
+                            for (let y = minY; y <= maxY; y++) {
+                                const dx = x - value.pos.x;
+                                const dy = y - value.pos.y;
+                                if (dx * dx + dy * dy <= radius) {
+                                    clogWillSmogGrid[y][x] = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (GameConfig.config.clogWillSmogB) {
+                        var radius = 20;
+                        const ceiledRadius = Math.ceil(Math.sqrt(radius)) + 1
+                        const minX = Math.max(value.pos.x - ceiledRadius, 0)
+                        const minY = Math.max(value.pos.y - ceiledRadius, 0)
+                        const maxX = Math.min(value.pos.x + ceiledRadius, width - 1)
+                        const maxY = Math.min(value.pos.y + ceiledRadius, height - 1)
+                
+                        for (let x = minX; x <= maxX; x++) {
+                            for (let y = minY; y <= maxY; y++) {
+                                const dx = x - value.pos.x;
+                                const dy = y - value.pos.y;
+                                if (dx * dx + dy * dy <= radius) {
+                                    clogWillSmogGrid[y][x] = true;
+                                }
+                            }
+                        }
                     }
                 }
             }

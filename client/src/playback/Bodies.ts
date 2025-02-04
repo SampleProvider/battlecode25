@@ -20,6 +20,7 @@ import { ClientConfig } from '../client-config'
 import { TowerBrush } from './Brushes'
 import { getImageIfLoaded } from '../util/ImageLoader'
 import { GameConfig } from '../app-context'
+import { clogWillSmogGrid } from './GameRenderer'
 
 export default class Bodies {
     public bodies: Map<number, Body> = new Map()
@@ -153,6 +154,9 @@ export default class Bodies {
         hoveredTile?: Vector
     ): void {
         for (const body of this.bodies.values()) {
+            if (GameConfig.config.clogWillSmog && !clogWillSmogGrid[body.pos.y][body.pos.x]) {
+                continue;
+            }
             if (bodyCtx) {
                 body.draw(match, bodyCtx)
             }
@@ -216,7 +220,7 @@ export default class Bodies {
 export class Body {
     public robotName: string = ''
     public robotType: schema.RobotType = schema.RobotType.NONE
-    protected imgPath: string = ''
+    public imgPath: string = ''
     protected size: number = 1
     public lastPos: Vector
     private prevSquares: Vector[]

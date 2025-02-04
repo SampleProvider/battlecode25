@@ -12,6 +12,7 @@ import { ClientConfig } from '../client-config'
 import { Colors, currentColors, getPaintColors, getTeamColors } from '../colors'
 import Round from './Round'
 import { GameConfig } from '../app-context'
+import { clogWillSmogGrid } from './GameRenderer'
 
 export type Dimension = {
     minCorner: Vector
@@ -133,6 +134,11 @@ export class CurrentMap {
             for (let j = 0; j < dimension.height; j++) {
                 const schemaIdx = this.locationToIndexUnchecked(i, j)
                 const coords = renderUtils.getRenderCoords(i, j, dimension)
+                if (GameConfig.config.clogWillSmog && !clogWillSmogGrid[j][i]) {
+                    ctx.fillStyle = "#000000";
+                    ctx.fillRect(coords.x, coords.y, 1.0, 1.0);
+                    continue;
+                }
 
                 // Render rounded (clipped) paint
                 const paint = this.paint[schemaIdx]
@@ -172,6 +178,9 @@ export class CurrentMap {
         }
         for (let i = 0; i < dimension.width; i++) {
             for (let j = 0; j < dimension.height; j++) {
+                if (GameConfig.config.clogWillSmog && !clogWillSmogGrid[j][i]) {
+                    continue;
+                }
                 const schemaIdx = this.locationToIndexUnchecked(i, j)
                 const coords = renderUtils.getRenderCoords(i, j, dimension)
                 // make sure to preserve dev spaghetti buhs
@@ -219,6 +228,9 @@ export class CurrentMap {
             ctx.globalAlpha = 1
             ctx.lineWidth = 0.1
             this.resourcePatterns.forEach((srp) => {
+                if (GameConfig.config.clogWillSmog && !clogWillSmogGrid[srp.center.y][srp.center.x]) {
+                    return;
+                }
                 const topLeftCoords = renderUtils.getRenderCoords(srp.center.x - 2, srp.center.y + 2, this.dimension)
                 const roundsRemaining = Math.max(srp.createRound + 50 - match.currentRound.roundNumber, -1)
                 if (roundsRemaining >= 0 && config.showSRPText) {
