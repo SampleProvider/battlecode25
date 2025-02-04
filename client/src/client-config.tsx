@@ -49,6 +49,10 @@ const DEFAULT_CONFIG = {
     enableCircles: false,
     enableObviousSrp: false,
     largeText: false,
+    botScale: 100,
+    scaleBotsByPaint: false,
+    opacityBotsByHealth: false,
+    highContrastMode: false,
     enableMiscCursedRendering: false,
     uselessExceededBytecode: false,
     borked9Slice: false,
@@ -87,14 +91,18 @@ const configDescription: Record<keyof ClientConfig, string> = {
     profileGames: 'Enable saving profiling data when running games',
     validateMaps: 'Validate maps before running a game',
     resolutionScale: 'Resolution scale for the game area. Decrease to help performance.',
-    volume: 'Volume of sound effects (%)',
-    pixelSimulator: 'Pixel Simulator mode (cursed)',
-    pisonFip: 'Pison Fip mode (cursed)',
+    volume: 'Volume of sound effects',
+    pixelSimulator: 'Pixel Simulator',
+    pisonFip: 'Pison Fip',
     enableCircles: 'Enable circular rendering',
     enableObviousSrp: 'Enable obvious SRP "outlines"',
     largeText: 'Draw larger marker and SRP countdown text',
+    botScale: 'Bot scale',
+    scaleBotsByPaint: 'Scale bot sizes by their paint amount',
+    opacityBotsByHealth: 'Change bot opacity by their health',
+    highContrastMode: 'Enable high-contrast paint and bots',
     enableMiscCursedRendering: 'Miscellaneus cursed rendering',
-    uselessExceededBytecode: 'Make bytecode limit exceeded highlight useless',
+    uselessExceededBytecode: 'Make red highlight over bots exceeding bytecode limit useless',
     borked9Slice: 'Borked 9-slice',
     theBlob: 'The Blob',
     enableOhNoesCanvas: 'oh noes',
@@ -336,7 +344,7 @@ const ConfigNumberElement: React.FC<{ configKey: keyof ClientConfig }> = ({ conf
                     }
                 }}
                 min={0}
-                max={200}
+                max={1000}
             />
             <div className={'ml-2 text-xs'}>{configDescription[configKey] ?? configKey}</div>
         </div>

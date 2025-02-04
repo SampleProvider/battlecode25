@@ -567,7 +567,10 @@ class GameRendererClass {
             this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%) skew(5deg, -30deg) rotateY(120deg)'
         } else if (GameConfig.config.enableMiscCursedRendering) {
             this.canvases[CanvasLayers.Background].style.filter = 'blur(1px) hue-rotate(5deg)'
-            this.canvases[CanvasLayers.Dynamic].style.filter = 'contrast(2)'
+            if (GameConfig.config.highContrastMode)
+                this.canvases[CanvasLayers.Dynamic].style.filter = 'contrast(2)'
+            else
+                this.canvases[CanvasLayers.Dynamic].style.filter = ''
             this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%) skew(5deg, -2deg)'
         } else {
             this.canvases[CanvasLayers.Background].style.filter = ''
