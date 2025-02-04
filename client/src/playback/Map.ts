@@ -137,39 +137,34 @@ export class CurrentMap {
                 // Render rounded (clipped) paint
                 const paint = this.paint[schemaIdx]
                 if (paint) {
-                    // if (config.enableFancyPaint) {
-                    //     renderUtils.renderRounded(
-                    //         ctx,
-                    //         i,
-                    //         j,
-                    //         this,
-                    //         this.paint,
-                    //         () => {
-                    //             ctx.fillStyle = paintColors[paint]
-                    //             ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
-                    //         },
-                    //         { x: true, y: false }
-                    //     )
-                    // } else {
-                    //     ctx.fillStyle = paintColors[paint]
-                    //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
-                    // }
                     ctx.fillStyle = paintColors[paint]
-                    if (GameConfig.config.enableCircles) {
+                    if (config.enableCircles) {
                         ctx.beginPath()
-                        if (GameConfig.config.pisonFip) {
+                        if (config.pisonFip) {
                             ctx.ellipse(coords.x + 0.5, coords.y + 0.5 + Math.sin(coords.x + performance.now() / 1000), 0.5 + Math.cos(coords.y + performance.now() / 1200) / 8, 0.5 + Math.sin(coords.y + performance.now() / 1200) / 8, 0, 0, Math.PI * 2)
                         } else {
                             ctx.ellipse(coords.x + 0.5, coords.y + 0.5, 0.5, 0.5, 0, 0, Math.PI * 2)
                         }
                         ctx.fill()
                     } else {
-                        if (GameConfig.config.pisonFip) {
+                        if (config.pisonFip) {
                             const w = 1 + Math.cos(coords.y + performance.now() / 1200) / 8
                             const h = 1 + Math.sin(coords.y + performance.now() / 1200) / 8
                             ctx.fillRect(coords.x - w / 2 + 0.5, coords.y - h / 2 + 0.5 + Math.sin(coords.x + performance.now() / 1000), w, h)
                         } else {
-                            ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                            if (!config.pixelSimulator && config.enableFancyPaint) {
+                                renderUtils.renderRounded(
+                                    ctx,
+                                    i,
+                                    j,
+                                    this,
+                                    this.paint,
+                                    () => ctx.fillRect(coords.x, coords.y, 1.0, 1.0),
+                                    { x: true, y: false }
+                                )
+                            } else {
+                                ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                            }
                         }
                     }
                 }
@@ -187,7 +182,7 @@ export class CurrentMap {
                     if (markerA) {
                         ctx.fillStyle = teamColors[0]
                         const label = markerA === 1 ? '1' : '2' // Primary/secondary
-                        if (GameConfig.config.largeText)
+                        if (config.largeText)
                             ctx.font = '10px monospace'
                         else
                             ctx.font = '1px monospace'
@@ -204,7 +199,7 @@ export class CurrentMap {
                     if (markerB) {
                         ctx.fillStyle = teamColors[1]
                         const label = markerB === 3 ? '1' : '2' // Primary/secondary
-                        if (GameConfig.config.largeText)
+                        if (config.largeText)
                             ctx.font = '10px monospace'
                         else
                             ctx.font = '1px monospace'
@@ -230,7 +225,7 @@ export class CurrentMap {
                     const label = roundsRemaining.toString()
                     ctx.fillStyle = 'white'
                     ctx.textAlign = 'right'
-                    if (GameConfig.config.largeText)
+                    if (config.largeText)
                         ctx.font = '10px monospace'
                     else
                         ctx.font = '1px monospace'
@@ -243,7 +238,7 @@ export class CurrentMap {
                     ctx.shadowBlur = 0
                     ctx.textAlign = 'start'
                 } else if (roundsRemaining === -1 && config.showSRPOutlines) {
-                    if (GameConfig.config.enableObviousSrp) {
+                    if (config.enableObviousSrp) {
                         ctx.fillStyle = teamColors[srp.teamId - 1]
                         ctx.fillRect(topLeftCoords.x, topLeftCoords.y, 5, 5)
                     } else {
@@ -469,16 +464,20 @@ export class StaticMap {
         //         this.dimension.height
         //     )
         // }
-        // const blob = getImageIfLoaded('the blob.png')
-        // if (blob) {
-        //     ctx.drawImage(
-        //         blob,
-        //         this.dimension.minCorner.x,
-        //         this.dimension.minCorner.y,
-        //         this.dimension.width,
-        //         this.dimension.height
-        //     )
-        // }
+        if (GameConfig.config.theBlob) {
+            const blob = getImageIfLoaded('the blob.png')
+            if (blob) {
+                ctx.globalAlpha = 0.2
+                ctx.drawImage(
+                    blob,
+                    this.dimension.minCorner.x,
+                    this.dimension.minCorner.y,
+                    this.dimension.width,
+                    this.dimension.height
+                )
+                ctx.globalAlpha = 1
+            }
+        }
 
         for (let i = 0; i < this.dimension.width; i++) {
             for (let j = 0; j < this.dimension.height; j++) {
@@ -492,13 +491,13 @@ export class StaticMap {
                         ctx.beginPath()
                         ctx.arc(coords.x + 0.5, coords.y + 0.5, 0.5, 0, Math.PI * 2);
                         ctx.fill();
+                    } else if (!GameConfig.config.pixelSimulator) {
+                        renderUtils.renderRounded(ctx, i, j, this, this.walls, () => {
+                            ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
+                        })
                     } else {
                         ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
                     }
-                    // renderUtils.renderRounded(ctx, i, j, this, this.walls, () => {
-                    //     ctx.fillStyle = currentColors[Colors.WALLS_COLOR]
-                    //     ctx.fillRect(coords.x, coords.y, 1.0, 1.0)
-                    // })
                 }
 
                 // Draw grid

@@ -42,8 +42,9 @@ export const get9SliceClipPath = (
     let bevel = 0.13
     let neighbors: boolean[] = []
     for (let v = 1; v < 9; v++) {
-        let x = cst.DIRECTIONS[v][0] + i
-        let y = cst.DIRECTIONS[v][1] + j
+        const dir = cst.DIRECTIONS[GameConfig.config.borked9Slice ? Math.abs(Math.floor(v << i + Math.tanh(j * v + i / 2) * j << v) % 9) : v]
+        let x = dir[0] + i
+        let y = dir[1] + j
         let pushVal =
             x < 0 || x == map.width
                 ? outsideMerge.x

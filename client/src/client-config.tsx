@@ -51,6 +51,8 @@ const DEFAULT_CONFIG = {
     largeText: false,
     enableMiscCursedRendering: false,
     uselessExceededBytecode: false,
+    borked9Slice: false,
+    theBlob: false,
     enableOhNoesCanvas: false,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
@@ -93,6 +95,8 @@ const configDescription: Record<keyof ClientConfig, string> = {
     largeText: 'Draw larger marker and SRP countdown text',
     enableMiscCursedRendering: 'Miscellaneus cursed rendering',
     uselessExceededBytecode: 'Make bytecode limit exceeded highlight useless',
+    borked9Slice: 'Borked 9-slice',
+    theBlob: 'The Blob',
     enableOhNoesCanvas: 'oh noes',
     colors: ''
 }
