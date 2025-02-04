@@ -293,12 +293,12 @@ export class Body {
         const pos = this.getInterpolatedCoords(match)
         const renderCoords = renderUtils.getRenderCoords(pos.x, pos.y, match.currentRound.map.staticMap.dimension)
 
-        if (GameConfig.config.opacityBotsByHealth) {
+        if (GameConfig.config.opacityBotsByHealth && this.hp != 0) {
             ctx.globalAlpha = this.hp / this.maxHp
         } else if (this.dead) {
             ctx.globalAlpha = 0.5
         }
-        renderUtils.renderCenteredImageOrLoadingIndicator(ctx, getImageIfLoaded(this.imgPath), renderCoords, this.size * GameConfig.config.botScale / 100 * (GameConfig.config.scaleBotsByPaint ? this.paint / this.maxPaint + 0.5 : 1))
+        renderUtils.renderCenteredImageOrLoadingIndicator(ctx, getImageIfLoaded(this.imgPath), renderCoords, this.size * GameConfig.config.botScale / 100 * ((GameConfig.config.scaleBotsByPaint && this.maxPaint != 0) ? this.paint / this.maxPaint + 0.5 : 1))
         ctx.globalAlpha = 1
     }
 
