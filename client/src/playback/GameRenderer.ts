@@ -228,30 +228,31 @@ class GameRendererClass {
 
         // pixel simulator
         if (GameConfig.config.pixelSimulator) {
-            var grid: number[][] = [];
-            var nextGrid: number[][] = [];
-            var width = currentRound.map.width;
-            var height = currentRound.map.height;
+            const grid: number[][] = [];
+            const nextGrid: number[][] = [];
+            const width = currentRound.map.width;
+            const height = currentRound.map.height;
             for (var y = 0; y < height; y++) {
-                grid[y] = [];
-                nextGrid[y] = [];
+                var y2 = GameConfig.config.rotalumisLexip ? height - y - 1 : y
+                grid[y2] = [];
+                nextGrid[y2] = [];
                 for (var x = 0; x < width; x++) {
-                    grid[y][x] = 0;
-                    nextGrid[y][x] = -1;
+                    grid[y2][x] = 0;
+                    nextGrid[y2][x] = -1;
                     if (currentRound.map.paint[y * width + x] == 3) {
-                        grid[y][x] = 1; // gold primary, sand
+                        grid[y2][x] = 1; // gold primary, sand
                     }
                     if (currentRound.map.paint[y * width + x] == 4) {
-                        grid[y][x] = 3; // gold secondary, lava
+                        grid[y2][x] = 3; // gold secondary, lava
                     }
                     if (currentRound.map.paint[y * width + x] == 1) {
-                        grid[y][x] = 4; // silver primary, concrete powder
+                        grid[y2][x] = 4; // silver primary, concrete powder
                     }
                     if (currentRound.map.paint[y * width + x] == 2) {
-                        grid[y][x] = 2; // silver secondary, water
+                        grid[y2][x] = 2; // silver secondary, water
                     }
                     if (currentRound.map.staticMap.walls[y * width + x] == 1) {
-                        grid[y][x] = 5; // concrete
+                        grid[y2][x] = 5; // concrete
                     }
                 }
             }
@@ -300,7 +301,7 @@ class GameRendererClass {
                     action(x, y + 1);
                 }
             };
-            var move = function (x1: number, y1: number, x2: number, y2: number) {
+            function move(x1: number, y1: number, x2: number, y2: number) {
                 nextGrid[y1][x1] = grid[y2][x2];
                 nextGrid[y2][x2] = grid[y1][x1];
             }
@@ -511,8 +512,9 @@ class GameRendererClass {
                 }
             }
             for (var y = 0; y < height; y++) {
+                var y2 = GameConfig.config.rotalumisLexip ? height - y - 1 : y
                 for (var x = 0; x < width; x++) {
-                    switch (nextGrid[y][x]) {
+                    switch (nextGrid[y2][x]) {
                         case 0:
                             currentRound.map.staticMap.walls[y * width + x] = 0;
                             currentRound.map.paint[y * width + x] = 0;
@@ -574,7 +576,10 @@ class GameRendererClass {
             this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%) skew(5deg, -2deg)'
         } else {
             this.canvases[CanvasLayers.Background].style.filter = ''
-            this.canvases[CanvasLayers.Dynamic].style.filter = ''
+            if (GameConfig.config.highContrastMode)
+                this.canvases[CanvasLayers.Dynamic].style.filter = 'contrast(2)'
+            else
+                this.canvases[CanvasLayers.Dynamic].style.filter = ''
             this.canvases[CanvasLayers.Overlay].style.transform = 'translate(-50%, -50%)'
         }
         this.render()
