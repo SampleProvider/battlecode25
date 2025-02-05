@@ -15,7 +15,7 @@ export enum CanvasLayers {
 
 // dont mind the spaghetti
 const audioCtx = new AudioContext();
-export var globalGain = audioCtx.createGain();
+export const globalGain = audioCtx.createGain();
 globalGain.connect(audioCtx.destination);
 globalGain.gain.value = 1;
 
@@ -24,7 +24,7 @@ export function setNoSound(s: boolean) {
     noSound = s;
 }
 
-var buffers: any = {};
+const buffers: any = {};
 export function playSound(name: any, gain: any, randomDetune?: any) {
     if (noSound) {
         return;
@@ -59,22 +59,12 @@ async function getFile(filepath: any) {
     const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
     return audioBuffer;
 }
-getFile("static/img/audio/buh.wav").then((result) => {
-    buffers["buh"] = result;
-});
-getFile("static/img/audio/villager.ogg").then((result) => {
-    buffers["villager"] = result;
-});
-getFile("static/img/audio/battle noble advanced.wav").then((result) => {
-    buffers["battle noble advanced"] = result;
-});
-getFile("static/img/audio/chess battle advanced.ogg").then((result) => {
-    buffers["chess battle advanced"] = result;
-});
-getFile("static/img/audio/code battle advanced.ogg").then((result) => {
-    buffers["code battle advanced"] = result;
-});
-function addMultipleFiles(name: any, filepath: any, extension: any, number: any) {
+function addFile(name: string, filepath: string) {
+    getFile(filepath).then((result) => {
+        buffers[name] = result;
+    });
+}
+function addMultipleFiles(name: string, filepath: string, extension: string, number: number) {
     buffers[name] = [];
     for (var i = 1; i <= number; i++) {
         getFile(filepath + i + extension).then((result) => {
@@ -82,6 +72,11 @@ function addMultipleFiles(name: any, filepath: any, extension: any, number: any)
         });
     }
 }
+addFile("buh", "static/img/audio/buh.wav");
+addFile("villager", "static/img/audio/villager.ogg");
+addFile("battle noble advanced", "static/img/audio/battle noble advanced.wav");
+addFile("chess battle advanced", "static/img/audio/chess battle advanced.ogg");
+addFile("code battle advanced", "static/img/audio/code battle advanced.ogg");
 // addMultipleFiles("paint", "static/img/audio/slime", ".ogg", 3);
 addMultipleFiles("paint", "static/img/audio/honey", ".ogg", 5);
 addMultipleFiles("attack", "static/img/audio/Strong_attack", ".ogg.mp3", 6);
@@ -90,36 +85,15 @@ addMultipleFiles("mop", "static/img/audio/Weak_attack", ".ogg.mp3", 4);
 addMultipleFiles("splash", "static/img/audio/water", ".ogg", 3);
 addMultipleFiles("disintegrate", "static/img/audio/Explosion", ".ogg", 4);
 addMultipleFiles("spawn", "static/img/audio/Smithing_Table", ".ogg.mp3", 3);
-getFile("static/img/audio/Hurt_Old.ogg").then((result) => {
-    buffers["death"] = result;
-});
-getFile("static/img/audio/anvil use.ogg").then((result) => {
-    buffers["build"] = result;
-});
-getFile("static/img/audio/Random_levelup.ogg").then((result) => {
-    buffers["upgrade"] = result;
-});
-getFile("static/img/audio/Totem_of_Undying.ogg").then((result) => {
-    buffers["revive"] = result;
-});
-buffers["hurt"] = [];
-getFile("static/img/audio/Player_hurt1.ogg.mp3").then((result) => {
-    buffers["hurt"].push(result);
-});
-getFile("static/img/audio/Player_hurt2.ogg.mp3").then((result) => {
-    buffers["hurt"].push(result);
-});
-getFile("static/img/audio/Player_hurt3.ogg").then((result) => {
-    buffers["hurt"].push(result);
-});
-getFile("static/img/audio/Challenge_complete.ogg").then((result) => {
-    buffers["win"] = result;
-});
-// getFile("static/img/audio/Random_break.ogg").then((result) => {
-//     buffers["death"] = result;
-// });
+addFile("death", "static/img/audio/Hurt_Old.ogg");
+addFile("build", "static/img/audio/anvil use.ogg");
+addFile("upgrade", "static/img/audio/Random_levelup.ogg");
+addFile("revive", "static/img/audio/Totem_of_Undying.ogg");
+addFile("hurt", "static/img/audio/Player_hurt1.ogg.mp3");
+addFile("win", "static/img/audio/Challenge_complete.ogg");
+addFile("death", "static/img/audio/Random_break.ogg");
 
-export var clogWillSmogGrid: any = [];
+export const clogWillSmogGrid: boolean[][] = [];
 
 class GameRendererClass {
     private canvases: Record<CanvasLayers, HTMLCanvasElement>
@@ -554,7 +528,7 @@ class GameRendererClass {
         }
 
         if (GameConfig.config.clogWillSmog) {
-            clogWillSmogGrid = [];
+            clogWillSmogGrid.length = 0;
             const width = currentRound.map.width;
             const height = currentRound.map.height;
             for (var y = 0; y < height; y++) {

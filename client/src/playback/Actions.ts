@@ -66,12 +66,10 @@ export default class Actions {
             if (GameConfig.config.clogWillSmog) {
                 var canSee = false;
                 var robot = match.currentRound.bodies.getById(action.robotId);
-                // buh how to fix
-                // @ts-ignore
-                if (action.actionData.id != null) {
+                // ensure is actual schema action by checking if has ID (idk what action doesnt)
+                if ('id' in action.actionData) {
                     // dont mind the spaghetti
                     try {
-                        // @ts-ignore
                         var robot2 = match.currentRound.bodies.getById(action.actionData.id());
                         if (clogWillSmogGrid[robot2.pos.y][robot2.pos.x]) {
                             canSee = true;
@@ -124,7 +122,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.DamageAction]: class DamageAction extends Action<schema.DamageAction> {
         apply(round: Round): void {
-            playSound("hurt", 0.5);
+            playSound("hurt", 0.5, 200);
             const src = round.bodies.getById(this.robotId)
             const target = round.bodies.getById(this.actionData.id())
 
@@ -140,7 +138,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.SplashAction]: class SplashAction extends Action<schema.SplashAction> {
         apply(round: Round): void {
-            playSound("splash", 1);
+            playSound("splash", 1, 200);
         }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const body = match.currentRound.bodies.getById(this.robotId)
@@ -161,9 +159,9 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
         apply(round: Round): void {
             const srcBody = round.bodies.getById(this.robotId)
             if (srcBody.robotType === schema.RobotType.MOPPER) {
-                playSound("mop", 1);
+                playSound("mop", 1, 200);
             } else {
-                playSound("attack", 1);
+                playSound("attack", 1, 200);
             }
         }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
@@ -230,7 +228,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.PaintAction]: class PaintAction extends Action<schema.PaintAction> {
         apply(round: Round): void {
-            playSound("paint", 1);
+            playSound("paint", 1, 200);
             const teamId = round.bodies.getById(this.robotId).team.id - 1
             const paintVal = teamId * 2 + 1 + this.actionData.isSecondary()
             round.map.paint[this.actionData.loc()] = paintVal
@@ -288,7 +286,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.MopAction]: class MopAction extends Action<schema.MopAction> {
         apply(round: Round): void {
-            playSound("attack", 1);
+            playSound("attack", 1, 200);
         }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const map = match.currentRound.map
@@ -361,7 +359,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.BuildAction]: class BuildAction extends Action<schema.BuildAction> {
         apply(round: Round): void {
-            playSound("build", 1);
+            playSound("build", 0.5, 400);
         }
         draw(match: Match, ctx: CanvasRenderingContext2D): void {
             const map = match.currentRound.map
@@ -444,7 +442,7 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
     },
     [schema.Action.SpawnAction]: class SpawnAction extends Action<schema.SpawnAction> {
         apply(round: Round): void {
-            playSound("spawn", 1);
+            playSound("spawn", 1, 300);
             round.bodies.spawnBodyFromAction(this.actionData)
         }
     },
@@ -452,10 +450,10 @@ export const ACTION_DEFINITIONS: Record<schema.Action, typeof Action<ActionUnion
         apply(round: Round): void {
             const robot = round.bodies.getById(this.actionData.id())
             if (robot.robotType == schema.RobotType.SOLDIER || robot.robotType == schema.RobotType.SPLASHER || robot.robotType == schema.RobotType.MOPPER) {
-                playSound("death", 1);
+                playSound("death", 1, 300);
             }
             else {
-                playSound("disintegrate", 1.5);
+                playSound("disintegrate", 1.5, 500);
             }
             if (this.actionData.dieType() === schema.DieType.EXCEPTION) {
                 // TODO: revisit this
