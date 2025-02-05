@@ -407,7 +407,7 @@ export class Body {
         ctx.strokeStyle = 'red'
         ctx.lineWidth = 0.1
         if (GameConfig.config.enableCircles) {
-            ctx.arc(renderCoords.x + 0.5, renderCoords.y + 0.5, Math.pow(this.metadata.actionRadiusSquared(), 2 / 4), 0, Math.PI *2)
+            ctx.arc(renderCoords.x + 0.5, renderCoords.y + 0.5, Math.pow(this.metadata.actionRadiusSquared(), 2 / 4), 0, Math.PI * 2)
             ctx.stroke()
         } else {
             const squares = this.getAllLocationsWithinRadiusSquared(match, this.pos, this.metadata.actionRadiusSquared())
@@ -417,7 +417,7 @@ export class Body {
         ctx.strokeStyle = 'blue'
         ctx.lineWidth = 0.1
         if (GameConfig.config.enableCircles) {
-            ctx.arc(renderCoords.x + 0.5, renderCoords.y + 0.5, Math.sqrt(this.metadata.visionRadiusSquared()), 0, Math.PI *2)
+            ctx.arc(renderCoords.x + 0.5, renderCoords.y + 0.5, Math.sqrt(this.metadata.visionRadiusSquared()), 0, Math.PI * 2)
             ctx.stroke()
         } else {
             const squares2 = this.getAllLocationsWithinRadiusSquared(match, this.pos, this.metadata.visionRadiusSquared())
@@ -523,7 +523,10 @@ export class Body {
             numeral = 'III'
         }
 
-        ctx.font = '0.5px serif'
+        if (GameConfig.config.largeText)
+            ctx.font = '5px serif'
+        else
+            ctx.font = '0.5px serif'
         ctx.fillStyle = this.team.color
         ctx.textAlign = 'right'
         ctx.shadowColor = 'black'
@@ -549,8 +552,7 @@ export class Body {
             `Location: (${this.pos.x}, ${this.pos.y})`,
             `Move Cooldown: ${this.moveCooldown}`,
             `Action Cooldown: ${this.actionCooldown}`,
-            `Bytecodes Used: ${this.bytecodesUsed}${
-                this.bytecodesUsed >= this.metadata.bytecodeLimit() ? ' <EXCEEDED!>' : ''
+            `Bytecodes Used: ${this.bytecodesUsed}${this.bytecodesUsed >= this.metadata.bytecodeLimit() ? ' <EXCEEDED!>' : ''
             }`
         ]
         if (this.indicatorString != '') {
