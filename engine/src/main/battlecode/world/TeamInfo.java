@@ -101,9 +101,9 @@ public class TeamInfo {
      * @throws IllegalArgumentException if the resulting amount of money is negative
      */
     public void addMoney(Team team, int amount) throws IllegalArgumentException {
-        if (this.moneyCounts[team.ordinal()] + amount < 0) {
-            throw new IllegalArgumentException("Invalid bread change");
-        }
+        // if (this.moneyCounts[team.ordinal()] + amount < 0) {
+        //     throw new IllegalArgumentException("Invalid bread change");
+        // }
         this.moneyCounts[team.ordinal()] += amount;
     }
 

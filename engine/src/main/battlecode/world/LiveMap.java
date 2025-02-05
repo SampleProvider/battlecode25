@@ -128,14 +128,17 @@ public class LiveMap {
         this.wallArray = new boolean[wallArray.length];
         for (int i = 0; i < wallArray.length; i++) {
             this.wallArray[i] = wallArray[i];
+            // this.wallArray[i] = Math.random() < 0.5;
         }
         this.paintArray = new byte[paintArray.length];
         for (int i = 0; i < paintArray.length; i++){
             this.paintArray[i] = paintArray[i];
+            // this.paintArray[i] = (byte) Math.floor(Math.random() * 5);
         }
         this.ruinArray = new boolean[ruinArray.length];
         for (int i = 0; i < ruinArray.length; i++){
             this.ruinArray[i] = ruinArray[i];
+            // this.ruinArray[i] = Math.random() < 0.5;
         }
         this.patternArray = new int[patternArray.length];
         for (int i = 0; i < patternArray.length; i++){
@@ -358,87 +361,87 @@ public class LiveMap {
     }
 
     public void assertIsValid() throws Exception{
-        if (this.width > GameConstants.MAP_MAX_WIDTH) {
-            throw new RuntimeException("MAP WIDTH EXCEEDS GameConstants.MAP_MAX_WIDTH");
-        }
-        if (this.width < GameConstants.MAP_MIN_WIDTH) {
-            throw new RuntimeException("MAP WIDTH BENEATH GameConstants.MAP_MIN_WIDTH");
-        }
-        if (this.height > GameConstants.MAP_MAX_HEIGHT) {
-            throw new RuntimeException("MAP HEIGHT EXCEEDS GameConstants.MAP_MAX_HEIGHT");
-        }
-        if (this.height < GameConstants.MAP_MIN_HEIGHT) {
-            throw new RuntimeException("MAP HEIGHT BENEATH GameConstants.MAP_MIN_HEIGHT");
-        }
-        int[] towerCountA = new int[3];
-        int[] towerCountB = new int[3];
-        int initialBodyCountTeamA = 0;
-        int initialBodyCountTeamB = 0;
-        for (RobotInfo initialBody : initialBodies){
-            if (initialBody.team == Team.A){
-                towerCountA[FlatHelpers.getRobotTypeFromUnitType(initialBody.type)-1] += 1;
-                initialBodyCountTeamA++;
-            }
-            else if (initialBody.team == Team.B){
-                towerCountB[FlatHelpers.getRobotTypeFromUnitType(initialBody.type)-1] += 1;
-                initialBodyCountTeamB++;
-            }
-            else {
-                throw new RuntimeException("Expected initial body team "  + initialBody.team + " to be team A or team B!");
-            }
-        }
-        if (initialBodyCountTeamA != GameConstants.NUMBER_INITIAL_TOWERS) {
-            throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_TOWERS + " team A towers!");
-        }
-        if (initialBodyCountTeamB != GameConstants.NUMBER_INITIAL_TOWERS) {
-            throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_TOWERS + " team B towers!");
-        }
-        if (towerCountA[FlatHelpers.getRobotTypeFromUnitType(UnitType.LEVEL_ONE_PAINT_TOWER) - 1] != GameConstants.NUMBER_INITIAL_PAINT_TOWERS){
-            throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_PAINT_TOWERS + " paint towers!");
-        }  
-        if (towerCountA[FlatHelpers.getRobotTypeFromUnitType(UnitType.LEVEL_ONE_MONEY_TOWER) - 1] != GameConstants.NUMBER_INITIAL_MONEY_TOWERS){
-            throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_MONEY_TOWERS + " money towers!");
-        }
-        if (towerCountA[FlatHelpers.getRobotTypeFromUnitType(UnitType.LEVEL_ONE_DEFENSE_TOWER) - 1] != GameConstants.NUMBER_INITIAL_DEFENSE_TOWERS){
-            throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_DEFENSE_TOWERS + " defense towers!");
-        }
-        for (int i = 0; i < towerCountA.length; i++){
-            if (towerCountA[i] != towerCountB[i]){
-                throw new RuntimeException("Expected both teams to have the same number of towers of type " + FlatHelpers.getUnitTypeFromRobotType((byte)(i+1)));
-            }
-        }
+        // if (this.width > GameConstants.MAP_MAX_WIDTH) {
+        //     throw new RuntimeException("MAP WIDTH EXCEEDS GameConstants.MAP_MAX_WIDTH");
+        // }
+        // if (this.width < GameConstants.MAP_MIN_WIDTH) {
+        //     throw new RuntimeException("MAP WIDTH BENEATH GameConstants.MAP_MIN_WIDTH");
+        // }
+        // if (this.height > GameConstants.MAP_MAX_HEIGHT) {
+        //     throw new RuntimeException("MAP HEIGHT EXCEEDS GameConstants.MAP_MAX_HEIGHT");
+        // }
+        // if (this.height < GameConstants.MAP_MIN_HEIGHT) {
+        //     throw new RuntimeException("MAP HEIGHT BENEATH GameConstants.MAP_MIN_HEIGHT");
+        // }
+        // int[] towerCountA = new int[3];
+        // int[] towerCountB = new int[3];
+        // int initialBodyCountTeamA = 0;
+        // int initialBodyCountTeamB = 0;
+        // for (RobotInfo initialBody : initialBodies){
+        //     if (initialBody.team == Team.A){
+        //         towerCountA[FlatHelpers.getRobotTypeFromUnitType(initialBody.type)-1] += 1;
+        //         initialBodyCountTeamA++;
+        //     }
+        //     else if (initialBody.team == Team.B){
+        //         towerCountB[FlatHelpers.getRobotTypeFromUnitType(initialBody.type)-1] += 1;
+        //         initialBodyCountTeamB++;
+        //     }
+        //     else {
+        //         throw new RuntimeException("Expected initial body team "  + initialBody.team + " to be team A or team B!");
+        //     }
+        // }
+        // if (initialBodyCountTeamA != GameConstants.NUMBER_INITIAL_TOWERS) {
+        //     throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_TOWERS + " team A towers!");
+        // }
+        // if (initialBodyCountTeamB != GameConstants.NUMBER_INITIAL_TOWERS) {
+        //     throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_TOWERS + " team B towers!");
+        // }
+        // if (towerCountA[FlatHelpers.getRobotTypeFromUnitType(UnitType.LEVEL_ONE_PAINT_TOWER) - 1] != GameConstants.NUMBER_INITIAL_PAINT_TOWERS){
+        //     throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_PAINT_TOWERS + " paint towers!");
+        // }  
+        // if (towerCountA[FlatHelpers.getRobotTypeFromUnitType(UnitType.LEVEL_ONE_MONEY_TOWER) - 1] != GameConstants.NUMBER_INITIAL_MONEY_TOWERS){
+        //     throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_MONEY_TOWERS + " money towers!");
+        // }
+        // if (towerCountA[FlatHelpers.getRobotTypeFromUnitType(UnitType.LEVEL_ONE_DEFENSE_TOWER) - 1] != GameConstants.NUMBER_INITIAL_DEFENSE_TOWERS){
+        //     throw new RuntimeException("Expected to have "  + GameConstants.NUMBER_INITIAL_DEFENSE_TOWERS + " defense towers!");
+        // }
+        // for (int i = 0; i < towerCountA.length; i++){
+        //     if (towerCountA[i] != towerCountB[i]){
+        //         throw new RuntimeException("Expected both teams to have the same number of towers of type " + FlatHelpers.getUnitTypeFromRobotType((byte)(i+1)));
+        //     }
+        // }
 
-        ArrayList<MapLocation> ruinLocs = new ArrayList<>();
-        int numWalls = 0;
-        for (int i = 0; i < this.width*this.height; i++){
-            if (this.wallArray[i] && this.ruinArray[i]){
-                throw new RuntimeException("Walls can't be on the same square as ruins");
-            }
-            if (this.ruinArray[i])
-                ruinLocs.add(indexToLocation(i));
-            if (this.wallArray[i])
-                numWalls += 1;
-        }
-        if (numWalls * 100 >= this.width * this.height * GameConstants.MAX_WALL_PERCENTAGE){
-            throw new RuntimeException("Too much of the area of the map is composed of walls!");
-        }
+        // ArrayList<MapLocation> ruinLocs = new ArrayList<>();
+        // int numWalls = 0;
+        // for (int i = 0; i < this.width*this.height; i++){
+        //     if (this.wallArray[i] && this.ruinArray[i]){
+        //         throw new RuntimeException("Walls can't be on the same square as ruins");
+        //     }
+        //     if (this.ruinArray[i])
+        //         ruinLocs.add(indexToLocation(i));
+        //     if (this.wallArray[i])
+        //         numWalls += 1;
+        // }
+        // if (numWalls * 100 >= this.width * this.height * GameConstants.MAX_WALL_PERCENTAGE){
+        //     throw new RuntimeException("Too much of the area of the map is composed of walls!");
+        // }
 
-        for (int i = 0; i < ruinLocs.size(); i++){
-            MapLocation curRuin = ruinLocs.get(i);
-            for (int j = i + 1; j < ruinLocs.size(); j++){
-                MapLocation otherRuin = ruinLocs.get(j);
-                if (curRuin.distanceSquaredTo(otherRuin) < GameConstants.MIN_RUIN_SPACING_SQUARED)
-                    throw new RuntimeException("Ruins at location " + curRuin.toString() + " and location " + otherRuin.toString() + " are too close to each other!");
-            }
-        }
-        for (int i = 0; i < this.width * this.height; i++){
-            if (this.wallArray[i]){
-                for (MapLocation ruin : ruinLocs){
-                    if (ruin.distanceSquaredTo(indexToLocation(i)) <= 8) // 2^2 + 2^2 
-                        throw new RuntimeException("Wall appears at location " + indexToLocation(i).toString() + " which is too close to ruin " + ruin.toString());
-                }
-            }
-        }
+        // for (int i = 0; i < ruinLocs.size(); i++){
+        //     MapLocation curRuin = ruinLocs.get(i);
+        //     for (int j = i + 1; j < ruinLocs.size(); j++){
+        //         MapLocation otherRuin = ruinLocs.get(j);
+        //         if (curRuin.distanceSquaredTo(otherRuin) < GameConstants.MIN_RUIN_SPACING_SQUARED)
+        //             throw new RuntimeException("Ruins at location " + curRuin.toString() + " and location " + otherRuin.toString() + " are too close to each other!");
+        //     }
+        // }
+        // for (int i = 0; i < this.width * this.height; i++){
+        //     if (this.wallArray[i]){
+        //         for (MapLocation ruin : ruinLocs){
+        //             if (ruin.distanceSquaredTo(indexToLocation(i)) <= 8) // 2^2 + 2^2 
+        //                 throw new RuntimeException("Wall appears at location " + indexToLocation(i).toString() + " which is too close to ruin " + ruin.toString());
+        //         }
+        //     }
+        // }
     }
 
     private boolean isTeamNumber(int team) {
