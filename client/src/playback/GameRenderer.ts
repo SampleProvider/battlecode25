@@ -40,6 +40,9 @@ export function playSound(name: any, gain: any, randomDetune?: any) {
     if (randomDetune != null) {
         detune = Math.random() * randomDetune * 2 - randomDetune;
     }
+    if (GameConfig.config.excessiveDetune) {
+        detune = (Math.random() * 5000 + 1000) * (Math.random() < 0.5 ? -1 : 1)
+    }
     const sampleSource = new AudioBufferSourceNode(audioCtx, {
         buffer: buffer,
         playbackRate: 1,

@@ -2,7 +2,7 @@ import React, { useEffect, useState, MouseEvent, PropsWithChildren, useRef } fro
 import { IconContext } from 'react-icons'
 import { IoCloseCircle, IoCloseCircleOutline } from 'react-icons/io5'
 import { ChromePicker } from 'react-color'
-import { AppContextProvider, useAppContext } from './app-context'
+import { AppContextProvider, GameConfig, useAppContext } from './app-context'
 import { GameRenderer } from './playback/GameRenderer'
 import { NumInput } from './components/forms'
 import {
@@ -26,6 +26,7 @@ interface Props {
 }
 
 const DEFAULT_CONFIG = {
+    cursedUI: false,
     showAllIndicators: false,
     showAllRobotRadii: false,
     showTimelineMarkers: true,
@@ -44,6 +45,7 @@ const DEFAULT_CONFIG = {
     validateMaps: false,
     resolutionScale: 100,
     volume: 100,
+    excessiveDetune: false,
     pixelSimulator: false,
     rotalumisLexip: false,
     clogWillSmog: false,
@@ -78,6 +80,7 @@ const DEFAULT_CONFIG = {
 }
 
 const configDescription: Record<keyof ClientConfig, string> = {
+    cursedUI: '',
     showAllIndicators: 'Show all indicator dots and lines',
     showAllRobotRadii: 'Show all robot view and attack radii',
     showTimelineMarkers: 'Show user-generated markers on the timeline',
@@ -96,6 +99,7 @@ const configDescription: Record<keyof ClientConfig, string> = {
     validateMaps: 'Validate maps before running a game',
     resolutionScale: 'Resolution scale for the game area. Decrease to help performance.',
     volume: 'Volume of sound effects',
+    excessiveDetune: 'Make random pitch variations in sounds excessive',
     pixelSimulator: 'Pixel Simulator',
     rotalumisLexip: 'Rotalumis Lexip (enable Pixel Simulator to use this setting)',
     clogWillSmog: 'Clog Will Smog',
@@ -154,7 +158,7 @@ export const ConfigPage: React.FC<Props> = (props) => {
 
     return (
         <div className={'flex flex-col'}>
-            <div className="mb-2">Edit Buh:</div>
+            <div className="mb-2">Edit { context.state.config.cursedUI ? 'Buh' : 'Config'}:</div>
             {Object.entries(DEFAULT_CONFIG).map(([k, v]) => {
                 const key = k as keyof ClientConfig
                 if (typeof v === 'string') return <ConfigStringElement configKey={key} key={key} />

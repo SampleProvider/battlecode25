@@ -13,7 +13,7 @@ import { Scrollbars } from 'react-custom-scrollbars-2'
 import useWindowDimensions from '../../util/window-size'
 import { TournamentPage } from './tournament/tournament'
 import Tournament, { JsonTournamentGame } from '../../playback/Tournament'
-import { useAppContext } from '../../app-context'
+import { GameConfig, useAppContext } from '../../app-context'
 import { useScaffold } from './runner/scaffold'
 import { ConfigPage } from '../../client-config'
 import { UpdateWarning } from './update-warning'
@@ -32,8 +32,9 @@ export const Sidebar: React.FC = () => {
 
     const [open, setOpen] = useSearchParamBool('sidebarOpen', true)
 
-    const minWidth = open ? 'min-w-[390px]' : 'min-w-[64px]'
-    const maxWidth = open ? 'max-w-[390px]' : 'max-w-[64px]'
+    const w = GameConfig.config.cursedUI ? 'min-w-[1000px]' : 'min-w-[64px]'
+    const minWidth = open ? 'min-w-[390px]' : w
+    const maxWidth = open ? 'max-w-[390px]' : w
 
     // Tournament mode loading ====================================================================================================
 
@@ -145,21 +146,38 @@ export const Sidebar: React.FC = () => {
 
     const activeSidebarButtons = React.useMemo(() => {
         if (showTournamentFeatures) {
+            if (GameConfig.config.cursedUI)
+                return [
+                    { name: 'Stack', page: PageType.QUEUE },
+                    { name: 'Game.ts', page: PageType.GAME },
+                    { name: 'WWPPC', page: PageType.TOURNAMENT }
+                ]
+            else
+                return [
+                    { name: 'Game', page: PageType.GAME },
+                    { name: 'Queue', page: PageType.QUEUE },
+                    { name: 'Tournament', page: PageType.TOURNAMENT }
+                ]
+        }
+        if (GameConfig.config.cursedUI)
+            return [
+                { name: 'Game.ts', page: PageType.GAME },
+                { name: 'Stack', page: PageType.QUEUE },
+                { name: 'SyntaxError: Invalid left-hand side expression in prefix operation', page: PageType.RUNNER },
+                { name: 'No Help', page: PageType.HELP },
+                { name: 'Map Borker', page: PageType.MAP_EDITOR },
+                { name: 'Buh', page: PageType.CONFIG }
+            ]
+        else
             return [
                 { name: 'Game', page: PageType.GAME },
-                { name: 'Stack', page: PageType.QUEUE },
-                { name: 'Competition', page: PageType.TOURNAMENT }
+                { name: 'Queue', page: PageType.QUEUE },
+                { name: 'Runner', page: PageType.RUNNER },
+                { name: 'Map Editor', page: PageType.MAP_EDITOR },
+                { name: 'Help', page: PageType.HELP },
+                { name: 'Config', page: PageType.CONFIG }
             ]
-        }
-        return [
-            { name: 'Game.ts', page: PageType.GAME },
-            { name: 'Stack', page: PageType.QUEUE },
-            { name: 'SyntaxError: Invalid left-hand side expression in prefix operation', page: PageType.RUNNER },
-            { name: 'Map Borker', page: PageType.MAP_EDITOR },
-            { name: 'No Help', page: PageType.HELP },
-            { name: 'Buh', page: PageType.CONFIG }
-        ]
-    }, [showTournamentFeatures])
+    }, [showTournamentFeatures, GameConfig.config.cursedUI])
 
     return (
         <div
@@ -179,8 +197,8 @@ export const Sidebar: React.FC = () => {
                     <div className="flex justify-between items-center">
                         {open && (
                             <>
-                                <p className="px-2 whitespace-nowrap font-extrabold text-xl">{`Windows ${BATTLECODE_YEAR}`}</p>
-                                <p className="text-xs">{`v${CLIENT_VERSION}`}</p>
+                                <p className="px-2 whitespace-nowrap font-extrabold text-xl">{GameConfig.config.cursedUI ? `Windows ${(Math.random() < 0.1) ? Math.PI : Math.floor(Math.random() * 10 + 1990)}` : `Battlecode ${BATTLECODE_YEAR}`}</p>
+                                <p className="text-xs">{`v${GameConfig.config.cursedUI ? '48.-2.undefined' : CLIENT_VERSION}`}</p>
                             </>
                         )}
                         <div className="flex">
@@ -201,7 +219,7 @@ export const Sidebar: React.FC = () => {
                             <UpdateWarning />
                             <div className="flex flex-row flex-wrap justify-between mb-2">
                                 {activeSidebarButtons.map((sidebarButton) => {
-                                    if (sidebarButton.page == PageType.RUNNER) {
+                                    if (sidebarButton.page == PageType.RUNNER && GameConfig.config.cursedUI) {
                                         return (
                                             <div
                                                 key={sidebarButton.page}
@@ -212,7 +230,7 @@ export const Sidebar: React.FC = () => {
                                                         : 'border-gray-400 opacity-60')
                                                 }
                                                 onClick={() => setPage(sidebarButton.page)}
-                                                style={{fontSize: '6px'}}
+                                                style={{ fontSize: '5px' }}
                                             >
                                                 {sidebarButton.name}
                                             </div>
