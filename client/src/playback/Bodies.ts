@@ -123,6 +123,9 @@ export default class Bodies {
         body.moveCooldown = turn.moveCooldown()
         body.actionCooldown = turn.actionCooldown()
         body.bytecodesUsed = turn.bytecodesUsed()
+        if (GameConfig.config.showExceededBytecode && GameConfig.config.bytecodeErrorSound && body.bytecodesUsed >= body.metadata.bytecodeLimit()) {
+            playSound("bytecode", 5);
+        }
 
         body.addToPrevSquares()
     }
@@ -290,9 +293,6 @@ export class Body {
                 ctx.fillRect(renderCoords.x, renderCoords.y, 1, 1)
             }
             ctx.globalAlpha = 1.0
-            if (GameConfig.config.bytecodeErrorSound) {
-                playSound("bytecode", 1);
-            }
         }
     }
 

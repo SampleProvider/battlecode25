@@ -64,8 +64,8 @@ const DEFAULT_CONFIG = {
     bytecodeErrorSound: false,
     borked9Slice: false,
     theBlob: false,
-    enableOhNoesCanvas: false,
     spinnyCarrier: false,
+    enableOhNoesCanvas: false,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
         [Colors.TEAM_TWO]: '#fee493',
@@ -120,8 +120,8 @@ const configDescription: Record<keyof ClientConfig, string> = {
     bytecodeErrorSound: 'Play error sound when bot runs out of bytecode',
     borked9Slice: 'Bork 9-slice',
     theBlob: 'The Blob',
+    spinnyCarrier: 'Spinny Carrier go WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',
     enableOhNoesCanvas: 'oh noes',
-    spinnyCarrier: 'spinny carrier go weeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     colors: ''
 }
 

@@ -5,7 +5,7 @@ import { useMatch, useRound, useTurnNumber } from '../../playback/GameRunner'
 import { CanvasLayers, GameRenderer } from '../../playback/GameRenderer'
 import { Space, VirtualSpaceRect } from 'react-zoomable-ui'
 import { ResetZoomIcon } from '../../icons/resetzoom'
-import { useAppContext } from '../../app-context'
+import { GameConfig, useAppContext } from '../../app-context'
 import Round from '../../playback/Round'
 import { DraggableTooltip, FloatingTooltip } from './tooltip'
 import Tooltip from '../tooltip'
@@ -46,7 +46,7 @@ export const GameRendererPanel: React.FC = () => {
             ref={wrapperRef}
         >
             {!round ? (
-                <p className="text-white text-center">Select a game from the queue</p>
+                <p className="text-white text-center">{GameConfig.config.cursedUI ? 'Select a game.ts from the stack' : 'Select a game from the queue'}</p>
             ) : (
                 <>
                     <ZoomableGameRenderer
