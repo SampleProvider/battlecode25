@@ -49,8 +49,8 @@ export const get9SliceClipPath = (
             x < 0 || x == map.width
                 ? outsideMerge.x
                 : y < 0 || y == map.height
-                  ? outsideMerge.y
-                  : valFunc(vals[map.locationToIndex(x, y)])
+                    ? outsideMerge.y
+                    : valFunc(vals[map.locationToIndex(x, y)])
         neighbors.push(pushVal)
     }
     let points: number[][] = []
@@ -127,7 +127,7 @@ export const applyStyles = (ctx: CanvasRenderingContext2D, styles: Record<string
     const saved: Record<string, any> = {}
     for (const style in styles) {
         saved[style] = (ctx as any)[style]
-        ;(ctx as any)[style] = styles[style]
+            ; (ctx as any)[style] = styles[style]
     }
     render()
     for (const style in saved) (ctx as any)[style] = saved[style]
@@ -303,8 +303,8 @@ export const renderCenteredImage = (
     coords: Vector,
     size: number
 ) => {
-    size *= 1.2
     if (GameConfig.config.pisonFip) {
+        size *= 1.2
         // const s = [size + Math.random() * 1 - 0.5, size + Math.random() * 1 - 0.5]
         const s = [size + Math.cos(coords.x) / 2, size + Math.sin(coords.y) / 2]
         const x = coords.x + 0.5 + Math.random() * 0.5 - 0.25
