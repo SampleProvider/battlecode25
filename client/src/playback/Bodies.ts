@@ -20,7 +20,7 @@ import { ClientConfig } from '../client-config'
 import { TowerBrush } from './Brushes'
 import { getImageIfLoaded } from '../util/ImageLoader'
 import { GameConfig } from '../app-context'
-import { clogWillSmogGrid } from './GameRenderer'
+import { clogWillSmogGrid, playSound } from './GameRenderer'
 
 export default class Bodies {
     public bodies: Map<number, Body> = new Map()
@@ -290,13 +290,23 @@ export class Body {
                 ctx.fillRect(renderCoords.x, renderCoords.y, 1, 1)
             }
             ctx.globalAlpha = 1.0
+            if (GameConfig.config.bytecodeErrorSound) {
+                playSound("bytecode", 1);
+            }
         }
     }
 
     public draw(match: Match, ctx: CanvasRenderingContext2D): void {
         const pos = this.getInterpolatedCoords(match)
         const renderCoords = renderUtils.getRenderCoords(pos.x, pos.y, match.currentRound.map.staticMap.dimension)
+        const renderCoords2 = renderUtils.getRenderCoords(pos.x + 1/2, pos.y - 1/2, match.currentRound.map.staticMap.dimension)
 
+        if (GameConfig.config.spinnyCarrier) {
+            ctx.save();
+            ctx.translate(renderCoords2.x, renderCoords2.y);
+            ctx.rotate(performance.now() / 1000 * 2 + this.id / 10000);
+            ctx.translate(-renderCoords2.x, -renderCoords2.y);
+        }
         if (GameConfig.config.opacityBotsByHealth && this.hp != 0) {
             ctx.globalAlpha = this.hp / this.maxHp
         } else if (this.dead) {
@@ -304,6 +314,9 @@ export class Body {
         }
         renderUtils.renderCenteredImageOrLoadingIndicator(ctx, getImageIfLoaded(this.imgPath), renderCoords, this.size * GameConfig.config.botScale / 100 * ((GameConfig.config.scaleBotsByPaint && this.maxPaint != 0) ? this.paint / this.maxPaint + 0.5 : 1))
         ctx.globalAlpha = 1
+        if (GameConfig.config.spinnyCarrier) {
+            ctx.restore();
+        }
     }
 
     private drawPath(match: Match, ctx: CanvasRenderingContext2D) {

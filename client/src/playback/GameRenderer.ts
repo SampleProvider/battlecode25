@@ -39,6 +39,7 @@ export function playSound(name: any, gain: any, randomDetune?: any) {
     var detune = 0;
     if (randomDetune != null) {
         detune = Math.random() * randomDetune * 2 - randomDetune;
+        detune = 0;
     }
     if (GameConfig.config.excessiveDetune) {
         detune = (Math.random() * 5000 + 1000) * (Math.random() < 0.5 ? -1 : 1)
@@ -94,7 +95,8 @@ addFile("upgrade", "static/img/audio/Random_levelup.ogg");
 addFile("revive", "static/img/audio/Totem_of_Undying.ogg");
 addFile("hurt", "static/img/audio/Player_hurt1.ogg.mp3");
 addFile("win", "static/img/audio/Challenge_complete.ogg");
-addFile("death", "static/img/audio/Random_break.ogg");
+// addFile("death", "static/img/audio/Random_break.ogg");
+addFile("bytecode", "static/img/audio/erro.mp3");
 
 export const clogWillSmogGrid: boolean[][] = [];
 

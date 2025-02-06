@@ -61,9 +61,11 @@ const DEFAULT_CONFIG = {
     highContrastMode: false,
     enableMiscCursedRendering: false,
     uselessExceededBytecode: false,
+    bytecodeErrorSound: false,
     borked9Slice: false,
     theBlob: false,
     enableOhNoesCanvas: false,
+    spinnyCarrier: false,
     colors: {
         [Colors.TEAM_ONE]: '#cdcdcc',
         [Colors.TEAM_TWO]: '#fee493',
@@ -115,9 +117,11 @@ const configDescription: Record<keyof ClientConfig, string> = {
     highContrastMode: 'Enable high-contrast paint and bots',
     enableMiscCursedRendering: 'Miscellaneus cursed rendering',
     uselessExceededBytecode: 'Make red highlight over bots exceeding bytecode limit useless',
+    bytecodeErrorSound: 'Play error sound when bot runs out of bytecode',
     borked9Slice: 'Bork 9-slice',
     theBlob: 'The Blob',
     enableOhNoesCanvas: 'oh noes',
+    spinnyCarrier: 'spinny carrier go weeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     colors: ''
 }
 
